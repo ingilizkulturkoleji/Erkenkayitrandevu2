@@ -26,9 +26,7 @@
         
         .logo { display: block; max-width: 180px; margin: 0 auto 20px; }
         
-        h2 { text-align: center; color: var(--secondary); margin-bottom: 20px; font-weight: 800; font-size: 1.8rem; line-height: 1.2; }
-
-        /* --- ÖZEL KAMPANYA KUTUSU --- */
+        /* KAMPANYA KUTUSU */
         .promo-box {
             background: var(--promo-gradient);
             color: white;
@@ -52,16 +50,34 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        h2 { text-align: center; color: var(--secondary); margin-bottom: 20px; font-weight: 800; font-size: 1.8rem; line-height: 1.2; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
         input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
         input:focus, select:focus { border-color: var(--primary); outline: none; background-color: #fff7ed; }
         
+        /* ODA KARTLARI */
         .room-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
         .room-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; font-size: 0.9rem; transition: 0.2s; }
         .room-card:hover { border-color: var(--primary); color: var(--primary); }
         .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
-        .hidden-room { display: none !important; }
+        
+        /* --- DOLU ODA STİLİ --- */
+        .room-full {
+            background-color: #f1f5f9; /* Gri Arkaplan */
+            color: #94a3b8; /* Silik Yazı */
+            border-color: #e2e8f0;
+            cursor: not-allowed; 
+            pointer-events: none; 
+            opacity: 0.7;
+        }
+        .room-full::after {
+            content: ' (DOLU)';
+            color: #ef4444; 
+            font-size: 0.75rem;
+            display: block;
+            margin-top: 2px;
+        }
 
         /* GÜVENLİK KUTUSU */
         .security-box { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; border-left: 5px solid var(--primary); }
@@ -141,9 +157,10 @@
             <div class="form-group">
                 <label>Müsait Danışman/Oda</label>
                 <div class="room-container">
-                    <div class="room-card" id="room-manchester" onclick="selectRoom('Manchester', this)">Manchester</div>
-                    <div class="room-card" id="room-liverpool" onclick="selectRoom('Liverpool', this)">Liverpool</div>
-                    <div class="room-card" id="room-cambridge" onclick="selectRoom('Cambridge', this)">Cambridge</div>
+                    <div class="room-card room-full" id="room-manchester">Manchester</div>
+                    <div class="room-card room-full" id="room-liverpool">Liverpool</div>
+                    <div class="room-card room-full" id="room-cambridge">Cambridge</div>
+                    
                     <div class="room-card" id="room-oxford" onclick="selectRoom('Oxford', this)">Oxford</div>
                 </div>
                 <input type="hidden" id="secilenOda" name="secilenOda">
@@ -186,23 +203,15 @@
             <span class="close-btn">&times;</span>
             <h3 style="color:var(--secondary); margin-top:0;">KVKK Aydınlatma Metni</h3>
             <div class="kvkk-body">
-                <p><strong>İngiliz Kültür Koleji</strong> ("Kurum") olarak kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu bilinçle, Kurum ile ilişkili tüm şahıslara ait her türlü kişisel verilerin 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVK Kanunu")'na uygun olarak işlenerek, muhafaza edilmesine büyük önem vermekteyiz.</p>
-
+                <p><strong>İngiliz Kültür Koleji</strong> ("Kurum") olarak kişisel verilerinizi KVK Kanunu'na uygun olarak işlemekteyiz.</p>
                 <h4>1. Veri Sorumlusu</h4>
-                <p>KVK Kanunu uyarınca, kişisel verileriniz; veri sorumlusu olarak İngiliz Kültür Koleji tarafından aşağıda açıklanan kapsamda işlenebilecektir.</p>
-
-                <h4>2. Kişisel Verilerin İşlenme Amacı</h4>
-                <p>Toplanan kişisel verileriniz (Ad, Soyad, İletişim Bilgileri, Öğrenci Bilgileri); randevu süreçlerinin planlanması ve icrası, eğitim hizmetlerimiz hakkında bilgilendirme yapılması ve sizinle iletişim kurulması amaçlarıyla işlenmektedir.</p>
-
-                <h4>3. İşlenen Kişisel Verilerin Kimlere ve Hangi Amaçla Aktarılabileceği</h4>
-                <p>Kişisel verileriniz, kanunen yetkili kamu kurumları ve özel kişiler dışında hiçbir üçüncü taraf ile paylaşılmamaktadır.</p>
-
-                <h4>4. Kişisel Veri Toplamanın Yöntemi ve Hukuki Sebebi</h4>
-                <p>Kişisel verileriniz, internet sitemizdeki başvuru formu aracılığıyla elektronik ortamda toplanmaktadır. Bu süreçte verileriniz, "ilgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla, veri sorumlusunun meşru menfaatleri için veri işlenmesinin zorunlu olması" hukuki sebebine dayanarak işlenmektedir.</p>
-
-                <h4>5. Veri Sahibinin Hakları</h4>
-                <p>KVK Kanunu'nun 11. maddesi uyarınca veri sahipleri; kişisel verilerinin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, verilerin düzeltilmesini veya silinmesini isteme haklarına sahiptir.</p>
-                
+                <p>Kişisel verileriniz, İngiliz Kültür Koleji tarafından işlenmektedir.</p>
+                <h4>2. Amaçlar</h4>
+                <p>Randevu oluşturma, iletişim kurma ve eğitim hizmetlerimiz hakkında bilgilendirme.</p>
+                <h4>3. Veri Aktarımı</h4>
+                <p>Verileriniz yasal zorunluluklar dışında üçüncü kişilerle paylaşılmaz.</p>
+                <h4>4. Haklarınız</h4>
+                <p>Verilerinizin silinmesini veya düzeltilmesini talep etme hakkına sahipsiniz.</p>
                 <br>
                 <p style="text-align: center; font-weight:bold; color:var(--primary);">Onaylamak için bu pencereyi kapatıp kutucuğu işaretleyiniz.</p>
             </div>
@@ -210,7 +219,7 @@
     </div>
 
     <script>
-        // URL'NİZ
+        // SİZİN URL'NİZ
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrgOTD9W4YDnNrIN-8xpg3RV--XaRpOuM8o-FVlp2_zgwglBSueTkvPiErV61wW1w-/exec';
 
         const dateInput = document.getElementById('randevuTarihi');
@@ -218,19 +227,13 @@
         const roomInput = document.getElementById('secilenOda');
         const phoneInput = document.getElementById('phoneInput');
         
-        // --- KVKK MODAL KODLARI ---
+        // --- KVKK MODAL ---
         const modal = document.getElementById("kvkkModal");
         const btnLink = document.getElementById("kvkkOpenBtn");
         const span = document.getElementsByClassName("close-btn")[0];
-
-        btnLink.onclick = function(e) {
-            e.preventDefault();
-            modal.style.display = "block";
-        }
+        btnLink.onclick = function(e) { e.preventDefault(); modal.style.display = "block"; }
         span.onclick = function() { modal.style.display = "none"; }
-        window.onclick = function(event) {
-            if (event.target == modal) { modal.style.display = "none"; }
-        }
+        window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
         // --- CAPTCHA ---
         let captchaResult = 0;
@@ -244,10 +247,10 @@
 
         let currentBookings = []; 
         const currentYear = new Date().getFullYear();
+        // Tarih Aralığı: 1 Aralık - 1 Ocak
         dateInput.setAttribute('min', `${currentYear}-12-01`);
         dateInput.setAttribute('max', `${currentYear + 1}-01-01`);
 
-        // Telefon Formatlama
         phoneInput.addEventListener('input', function (e) {
             var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
             e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '') + (x[4] ? ' ' + x[4] : '');
@@ -255,22 +258,41 @@
 
         dateInput.addEventListener('change', async function() {
             if (!this.value) return;
-            resetRooms();
-            const day = new Date(this.value).getDay();
-            const rLiv = document.getElementById('room-liverpool');
+            
+            // SIFIRLA
+            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+            roomInput.value = '';
+            timeSelect.innerHTML = '<option>Önce Oda Seçiniz</option>';
+            timeSelect.disabled = true;
+
+            // --- ODA MANTIĞI ---
+            const selectedDate = new Date(this.value);
+            const dayOfWeek = selectedDate.getDay(); // 0 = Pazar
+            const dateString = this.value; // YYYY-MM-DD formatında
+
+            // Diğer odalar her zaman 'room-full'
             const rMan = document.getElementById('room-manchester');
-            const rOx = document.getElementById('room-oxford');
+            const rLiv = document.getElementById('room-liverpool');
             const rCam = document.getElementById('room-cambridge');
-
-            rLiv.classList.remove('hidden-room'); rMan.classList.remove('hidden-room');
-            rOx.classList.remove('hidden-room'); rCam.classList.remove('hidden-room');
-
-            if (day === 0) { 
-                rMan.classList.add('hidden-room');
-                rOx.classList.add('hidden-room');
-            } else if (day === 6) { 
-            } else { 
-                rLiv.classList.add('hidden-room');
+            const rOx = document.getElementById('room-oxford');
+            
+            rMan.classList.add('room-full');
+            rLiv.classList.add('room-full');
+            rCam.classList.add('room-full');
+            
+            // Oxford Mantığı:
+            if (dayOfWeek === 0) { 
+                // Pazar Günü
+                if (dateString === '2025-12-28') {
+                    // Sadece 28 Aralık Pazar günü AÇIK
+                    rOx.classList.remove('room-full');
+                } else {
+                    // Diğer Pazarlar KAPALI
+                    rOx.classList.add('room-full');
+                }
+            } else {
+                // Hafta içi ve Cumartesi HER ZAMAN AÇIK
+                rOx.classList.remove('room-full');
             }
 
             try {
@@ -282,6 +304,8 @@
 
         function selectRoom(name, el) {
             if(!dateInput.value) { document.getElementById('roomWarning').style.display='block'; return; }
+            if(el.classList.contains('room-full')) return;
+
             document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             roomInput.value = name;
@@ -294,15 +318,22 @@
             
             for(let h=9; h<=17; h++) {
                 for(let m=0; m<60; m+=20) {
+                    // Öğle Arası: 12:40 ve 13:00 Kapalı (Her gün)
                     if(h===12 && m===40) continue;
                     if(h===13 && m===0) continue;
                     
                     if(isSunday) {
-                        if(h<10) continue; 
+                        // Sadece 28 Aralık için geçerli Pazar saatleri: 10:30 - 16:30
+                        // Başlangıç: 10:40 (10:30 açılış sonrası ilk 20 dk)
+                        if(h<10) continue;
                         if(h===10 && m<30) continue;
+                        
+                        // Bitiş: 16:00 (16:20'de biter, 16:30'a sığar)
+                        if(h===16 && m>=20) continue; 
                         if(h>16) continue;
-                        if(h===16 && m>0) continue;
                     } else {
+                        // Diğer günler: 09:00 - 17:00
+                        // Son randevu 16:40 (17:00'da biter)
                         if(h===17 && m>0) continue;
                     }
 
@@ -317,44 +348,32 @@
             }
         }
 
-        function resetRooms() {
-            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-            roomInput.value = '';
-            timeSelect.innerHTML = '<option>Önce Oda Seçiniz</option>';
-            timeSelect.disabled = true;
-        }
-
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const msg = document.getElementById('statusMessage');
             
             if(!roomInput.value) { alert("Lütfen bir oda seçiniz."); return; }
 
-            // GÜVENLİK
             const captchaVal = parseInt(document.getElementById('captchaInput').value);
             if(captchaVal !== captchaResult) {
-                msg.innerHTML = '⚠️ Matematik sorusu yanlış! Tekrar deneyin.';
+                msg.innerHTML = '⚠️ Matematik sorusu yanlış!';
                 msg.className = 'error'; msg.style.display = 'block';
-                generateCaptcha(); document.getElementById('captchaInput').value='';
-                return;
+                generateCaptcha(); document.getElementById('captchaInput').value=''; return;
             }
 
             const phoneVal = phoneInput.value;
             if(phoneVal.length < 14) {
-                msg.innerHTML = '⚠️ Lütfen geçerli bir telefon numarası giriniz.';
-                msg.className = 'error'; msg.style.display = 'block';
-                return;
+                msg.innerHTML = '⚠️ Lütfen geçerli bir telefon giriniz.';
+                msg.className = 'error'; msg.style.display = 'block'; return;
             }
 
             if(!document.getElementById('kvkkCheck').checked) {
                 msg.innerHTML = '⚠️ Lütfen KVKK metnini onaylayınız.';
-                msg.className = 'error'; msg.style.display = 'block';
-                return;
+                msg.className = 'error'; msg.style.display = 'block'; return;
             }
 
             const btn = document.getElementById('submitButton');
-            btn.disabled = true;
-            btn.innerText = 'Gönderiliyor...';
+            btn.disabled = true; btn.innerText = 'Gönderiliyor...';
 
             const formData = new FormData(this);
             fetch(SCRIPT_URL, {
@@ -363,13 +382,18 @@
             .then(r => r.json())
             .then(d => {
                 if(d.result === 'error') {
-                    msg.innerText = '⚠️ ' + d.message;
-                    msg.className = 'error';
+                    msg.innerText = '⚠️ ' + d.message; msg.className = 'error';
                 } else {
                     msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
                     msg.className = 'success';
                     this.reset();
-                    resetRooms();
+                    // Reset sonrası kilitle
+                    document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+                    document.getElementById('room-manchester').classList.add('room-full');
+                    document.getElementById('room-liverpool').classList.add('room-full');
+                    document.getElementById('room-cambridge').classList.add('room-full');
+                    // Tarih silindiği için Oxford'u da kapat (Tarih seçince açılacak)
+                    document.getElementById('room-oxford').classList.add('room-full');
                     generateCaptcha();
                 }
                 msg.style.display = 'block';
