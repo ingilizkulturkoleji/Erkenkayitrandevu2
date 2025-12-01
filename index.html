@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erken Kayıt Randevu Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb; --primary-dark: #1d4ed8; --primary-soft: #dbeafe;
+            --text-dark: #1e293b; --text-muted: #64748b; --bg-body: #f0f5ff;
+            --bg-card: #ffffff; --border-light: #e2e8f0;
+            --success-bg: #d1fae5; --success-text:#065f46;
+            --error-bg: #fee2e2; --error-text: #991b1b;
+            --shadow-soft: 0 10px 30px -5px rgba(37, 99, 235, 0.1), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); background-image: linear-gradient(to bottom right, #f0f5ff, #e0eaff); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: var(--text-dark); }
+        .container { background-color: var(--bg-card); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-soft); width: 100%; max-width: 550px; border: 1px solid #ffffff; }
+        .logo { display: block; max-width: 160px; margin: 0 auto 25px; }
+        h2 { font-family: 'Poppins', sans-serif; text-align: center; color: var(--text-dark); margin-bottom: 35px; font-weight: 700; font-size: 1.8rem; }
+        .form-group { margin-bottom: 24px; }
+        label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-dark); font-size: 0.95rem; }
+        input, select { width: 100%; padding: 14px 16px; border: 2px solid var(--border-light); border-radius: 12px; font-size: 15px; box-sizing: border-box; transition: all 0.3s ease; background-color: #f8fafc; color: var(--text-dark); font-family: 'Inter', sans-serif; }
+        input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px var(--primary-soft); background-color: #fff; }
+        .flex-group { display: flex; gap: 15px; }
+        .flex-group > div { flex: 1; }
+        @media (max-width: 480px) { .flex-group { flex-direction: column; } }
+        .room-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; margin-bottom: 25px; }
+        .room-card { background: #fff; border: 2px solid var(--border-light); border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 600; color: var(--text-muted); font-size: 0.85rem; position: relative; overflow: hidden; }
+        .room-card:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-3px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+        .room-card.selected { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: transparent; box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.4); transform: translateY(-3px); }
+        .hidden-room { display: none !important; }
+        button#submitButton { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 14px; font-size: 17px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 15px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+        button#submitButton:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); filter: brightness(1.1); }
+        button:disabled { background: var(--border-light); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        #statusMessage { text-align: center; margin-top: 25px; padding: 18px; border-radius: 12px; font-weight: 600; display: none; font-size: 0.95rem; }
+        .success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #a7f3d0; }
+        .error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid #fecaca;}
+        .loader { border: 3px solid var(--primary-soft); border-top: 3px solid var(--primary); border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loadingText { font-weight: 500; color: var(--primary); font-size: 0.9em; margin-left: 5px; }
+        #roomWarning { font-size: 0.9em; color: var(--error-text); display:none; margin-top: 8px; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.hizliresim.com/6eldhh1.png" alt="Okul Logosu" class="logo">
+        <h2>Tanışma ve Kayıt Randevusu</h2>
+        
+        <form id="appointmentForm">
+            <div class="form-group">
+                <label>Veli Adı Soyadı</label>
+                <input type="text" name="veliAdiSoyadi" required placeholder="Veli Adı Soyadı">
+            </div>
+            <div class="form-group">
+                <label>Öğrenci Adı Soyadı</label>
+                <input type="text" name="ogrenciAdiSoyadi" required placeholder="Öğrenci Adı Soyadı">
+            </div>
+            <div class="form-group flex-group">
+                <div>
+                    <label>Öğrenci Sınıfı</label>
+                    <select name="ogrenciSinifi" required>
+                        <option value="">Sınıf Seçiniz</option>
+                        <option value="Anaokulu">Anaokulu</option>
+                        <option value="1. Sınıf">1. Sınıf</option>
+                        <option value="2. Sınıf">2. Sınıf</option>
+                        <option value="3. Sınıf">3. Sınıf</option>
+                        <option value="4. Sınıf">4. Sınıf</option>
+                        <option value="5. Sınıf">5. Sınıf</option>
+                        <option value="6. Sınıf">6. Sınıf</option>
+                        <option value="7. Sınıf">7. Sınıf</option>
+                        <option value="8. Sınıf">8. Sınıf</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Telefon Numarası</label>
+                    <input type="tel" name="telefon" required placeholder="05XX XXX XX XX">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Görüşme Tarihi (1 Aralık - 1 Ocak)</label>
+                <input type="date" id="randevuTarihi" name="randevuTarihi" required>
+            </div>
+            <div class="form-group">
+                <label>Görüşme Odası (Salon)</label>
+                <div class="room-container">
+                    <div class="room-card" id="room-manchester" onclick="selectRoom('Manchester', this)">Manchester</div>
+                    <div class="room-card" id="room-liverpool" onclick="selectRoom('Liverpool', this)">Liverpool</div>
+                    <div class="room-card" id="room-cambridge" onclick="selectRoom('Cambridge', this)">Cambridge</div>
+                    <div class="room-card" id="room-oxford" onclick="selectRoom('Oxford', this)">Oxford</div>
+                </div>
+                <input type="hidden" id="secilenOda" name="secilenOda">
+                <div id="roomWarning">⚠️ Lütfen önce yukarıdan bir tarih seçiniz.</div>
+            </div>
+            <div class="form-group">
+                <label>Randevu Saati <span id="loadingText"></span></label>
+                <select id="randevuSaati" name="randevuSaati" required disabled>
+                    <option value="">Önce Tarih ve Oda Seçiniz</option>
+                </select>
+            </div>
+            <button type="submit" id="submitButton">Randevuyu Onayla</button>
+            <div id="statusMessage"></div>
+        </form>
+    </div>
+
+    <script>
+        // SİZİN VERDİĞİNİZ YENİ URL BURAYA EKLENDİ
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrgOTD9W4YDnNrIN-8xpg3RV--XaRpOuM8o-FVlp2_zgwglBSueTkvPiErV61wW1w-/exec';
+
+        const dateInput = document.getElementById('randevuTarihi');
+        const timeSelect = document.getElementById('randevuSaati');
+        const roomInput = document.getElementById('secilenOda');
+        let currentBookings = []; 
+
+        const currentYear = new Date().getFullYear();
+        const minDate = `${currentYear}-12-01`;
+        const maxDate = `${currentYear + 1}-01-01`;
+        dateInput.setAttribute('min', minDate);
+        dateInput.setAttribute('max', maxDate);
+
+        dateInput.addEventListener('change', async function() {
+            if (!this.value) return;
+            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+            roomInput.value = '';
+            timeSelect.innerHTML = '<option value="">Lütfen Oda Seçiniz</option>';
+            timeSelect.disabled = true;
+            document.getElementById('roomWarning').style.display = 'none';
+            
+            // ODA YÖNETİMİ
+            const selectedDate = new Date(this.value);
+            const dayOfWeek = selectedDate.getDay(); 
+            const roomManchester = document.getElementById('room-manchester');
+            const roomLiverpool = document.getElementById('room-liverpool');
+            const roomCambridge = document.getElementById('room-cambridge');
+            const roomOxford = document.getElementById('room-oxford');
+
+            roomManchester.classList.remove('hidden-room');
+            roomLiverpool.classList.remove('hidden-room');
+            roomCambridge.classList.remove('hidden-room');
+            roomOxford.classList.remove('hidden-room');
+
+            if (dayOfWeek === 0) { // PAZAR
+                roomManchester.classList.add('hidden-room');
+                roomOxford.classList.add('hidden-room');
+            } 
+            else if (dayOfWeek === 6) { // CUMARTESİ
+                // Hepsi açık
+            } 
+            else { // HAFTA İÇİ
+                roomLiverpool.classList.add('hidden-room');
+            }
+
+            document.getElementById('loadingText').innerHTML = '<div class="loader"></div>Kontrol ediliyor...';
+            try {
+                const response = await fetch(`${SCRIPT_URL}?date=${this.value}`);
+                const data = await response.json();
+                if (data.result === 'success') {
+                    currentBookings = data.bookings; 
+                    document.getElementById('loadingText').innerHTML = '<span style="color: var(--primary)">✓ Güncel</span>';
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loadingText').textContent = 'Hata';
+            }
+        });
+
+        function selectRoom(roomName, element) {
+            if (!dateInput.value) {
+                document.getElementById('roomWarning').style.display = 'block';
+                return;
+            }
+            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            roomInput.value = roomName;
+            const selectedDate = new Date(dateInput.value);
+            const isSunday = selectedDate.getDay() === 0;
+            generateTimeSlots(roomName, isSunday);
+        }
+
+        function generateTimeSlots(selectedRoom, isSunday) {
+            timeSelect.innerHTML = '';
+            const availableTimes = [];
+            
+            for (let hour = 9; hour <= 17; hour++) {
+                for (let minute = 0; minute < 60; minute += 20) {
+                    if (hour === 12 && minute === 40) continue;
+                    if (hour === 13 && minute === 0) continue; 
+
+                    if (isSunday) {
+                        if (hour < 10) continue;
+                        if (hour === 10 && minute < 30) continue; 
+                        if (hour === 16 && minute > 0) continue; // 16:00 son
+                        if (hour > 16) continue;
+                    } else {
+                        if (hour === 17 && minute > 0) continue; 
+                    }
+
+                    const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                    const checkString = `${selectedRoom}-${timeString}`;
+                    if (!currentBookings.includes(checkString)) {
+                        availableTimes.push(timeString);
+                    }
+                }
+            }
+
+            if (availableTimes.length === 0) {
+                timeSelect.innerHTML = '<option value="">Bu oda doludur.</option>';
+                timeSelect.disabled = true;
+            } else {
+                availableTimes.forEach(time => {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
+                });
+                timeSelect.disabled = false;
+            }
+        }
+
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const odaSecimi = document.getElementById('secilenOda').value;
+            const saatSecimi = document.getElementById('randevuSaati').value;
+            const msg = document.getElementById('statusMessage');
+
+            if (!odaSecimi || odaSecimi === "") {
+                msg.innerHTML = '⚠️ Lütfen bir <b>Görüşme Odası</b> seçiniz!';
+                msg.className = 'error';
+                msg.style.display = 'block';
+                return;
+            }
+            if (!saatSecimi || saatSecimi === "") {
+                msg.innerHTML = '⚠️ Lütfen bir <b>Randevu Saati</b> seçiniz!';
+                msg.className = 'error';
+                msg.style.display = 'block';
+                return;
+            }
+
+            const btn = document.getElementById('submitButton');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader" style="border-top-color:white; border-color: rgba(255,255,255,0.3); width: 16px; height: 16px;"></div> Kaydediliyor...';
+            msg.style.display = 'none';
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.result === 'error') {
+                    msg.innerHTML = '⚠️ ' + responseData.message;
+                    msg.className = 'error';
+                    msg.style.display = 'block';
+                    dateInput.dispatchEvent(new Event('change')); 
+                } else {
+                    msg.innerHTML = '✅ Kaydınız başarıyla oluşturuldu! Teşekkürler.';
+                    msg.className = 'success';
+                    msg.style.display = 'block';
+                    this.reset();
+                    document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+                    document.getElementById('room-liverpool').classList.add('hidden-room'); 
+                    document.getElementById('room-manchester').classList.remove('hidden-room');
+                    document.getElementById('room-oxford').classList.remove('hidden-room');
+                    document.getElementById('room-cambridge').classList.remove('hidden-room');
+                    timeSelect.innerHTML = '<option value="">Önce Tarih ve Oda Seçiniz</option>';
+                    timeSelect.disabled = true;
+                    currentBookings = [];
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                msg.textContent = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
+                msg.className = 'error';
+                msg.style.display = 'block';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = 'Randevuyu Onayla';
+            });
+        });
+    </script>
+</body>
+</html>
