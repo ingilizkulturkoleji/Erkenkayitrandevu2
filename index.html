@@ -3,37 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İngiliz Kültür Koleji - Tanışma Randevusu</title>
+    <title>İngiliz Kültür Koleji - Erken Kayıt</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ea580c; --primary-dark: #c2410c;
             --secondary: #1e3a8a; --bg: #f8fafc; --white: #ffffff;
+            --promo-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #334155; }
-        .container { background-color: var(--white); padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 6px solid var(--secondary); position: relative; }
+        
+        .container { 
+            background-color: var(--white); 
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 500px; 
+            border-top: 6px solid var(--secondary); 
+            position: relative; 
+        }
+        
         .logo { display: block; max-width: 180px; margin: 0 auto 20px; }
-        h2 { text-align: center; color: var(--secondary); margin-bottom: 10px; font-weight: 800; font-size: 1.8rem; }
-        .subtitle { text-align: center; color: #64748b; margin-bottom: 30px; font-size: 0.95rem; }
+        
+        h2 { text-align: center; color: var(--secondary); margin-bottom: 20px; font-weight: 800; font-size: 1.8rem; line-height: 1.2; }
+
+        /* --- ÖZEL KAMPANYA KUTUSU --- */
+        .promo-box {
+            background: var(--promo-gradient);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
+            border: 2px solid white;
+            outline: 2px solid #f59e0b;
+            transform: scale(1.02);
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        .promo-box strong {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-top: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
         input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
         input:focus, select:focus { border-color: var(--primary); outline: none; background-color: #fff7ed; }
         
         .room-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .room-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; font-size: 0.9rem; }
+        .room-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; font-size: 0.9rem; transition: 0.2s; }
+        .room-card:hover { border-color: var(--primary); color: var(--primary); }
         .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
         .hidden-room { display: none !important; }
 
         /* GÜVENLİK KUTUSU */
-        .security-box { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid var(--primary); }
-        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; margin-bottom: 12px; cursor: pointer;}
-        .checkbox-group input { width: 18px; height: 18px; cursor: pointer; margin-top: 2px; }
-        .checkbox-group a { color: var(--primary); text-decoration: underline; font-weight: 700; }
-        
-        .math-captcha { display: flex; align-items: center; gap: 10px; margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 15px; }
-        .math-captcha span { font-weight: 800; color: var(--secondary); font-size: 1.1rem; }
-        .math-captcha input { width: 80px; text-align: center; margin: 0; }
+        .security-box { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; border-left: 5px solid var(--primary); }
+        .checkbox-wrapper { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.4; cursor: pointer; }
+        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: var(--primary); }
+        .kvkk-link { color: var(--primary); font-weight: 700; text-decoration: underline; cursor: pointer; }
+        .math-captcha { display: flex; align-items: center; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #cbd5e1; }
+        .math-text { font-weight: 800; color: var(--secondary); font-size: 1.2rem; user-select: none; }
 
         button#submitButton { width: 100%; padding: 18px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3); }
         button#submitButton:hover:not(:disabled) { background-color: var(--primary-dark); transform: translateY(-2px); }
@@ -43,25 +79,27 @@
         .success { background-color: #dcfce7; color: #166534; }
         .error { background-color: #fee2e2; color: #991b1b; }
 
-        /* KVKK MODAL (AÇILIR PENCERE) STİLİ */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background-color: #fefefe; margin: 5% auto; padding: 30px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 15px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;
-        }
-        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        /* KVKK MODAL */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 30px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
+        .close-btn { color: #64748b; float: right; font-size: 32px; font-weight: bold; cursor: pointer; line-height: 20px; }
         .close-btn:hover { color: #000; }
-        .kvkk-text { max-height: 400px; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; color: #334155; padding-right: 10px; margin-top: 20px; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; background: #f8fafc; }
-        .kvkk-title { color: var(--secondary); font-weight: 800; margin-bottom: 10px; font-size: 1.2rem; }
+        .kvkk-body { max-height: 60vh; overflow-y: auto; font-size: 0.85rem; line-height: 1.6; color: #334155; padding: 15px; background: #f1f5f9; border-radius: 8px; margin-top: 15px; text-align: justify; }
+        .kvkk-body h4 { color: var(--secondary); margin-bottom: 5px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <img src="https://i.hizliresim.com/6eldhh1.png" alt="Okul Logosu" class="logo">
+        
+        <div class="promo-box">
+            2026 - 2027 Eğitim Öğretim Döneminde
+            <strong>EĞİTİM ÜCRETİNE ZAM YOK!</strong>
+        </div>
+
         <h2>Erken Kayıt Fırsatı</h2>
-        <p class="subtitle">Çocuğunuzun geleceği için bir kahve içelim.</p>
         
         <form id="appointmentForm">
             <div class="form-group">
@@ -120,21 +158,21 @@
             </div>
 
             <div class="security-box">
-                <label class="checkbox-group">
+                <label class="checkbox-wrapper">
                     <input type="checkbox" id="parentCheck" required>
                     <span>Öğrencinin yasal velisi olduğumu onaylıyorum.</span>
                 </label>
 
-                <label class="checkbox-group">
+                <label class="checkbox-wrapper">
                     <input type="checkbox" id="kvkkCheck" required>
                     <span>
-                        <a href="#" id="kvkkLink">KVKK Aydınlatma Metni</a>'ni okudum ve onaylıyorum.
+                        <span class="kvkk-link" id="kvkkOpenBtn">KVKK Aydınlatma Metni</span>'ni okudum ve onaylıyorum.
                     </span>
                 </label>
                 
                 <div class="math-captcha">
-                    <span id="captchaQuestion">3 + 4 = ?</span>
-                    <input type="number" id="captchaInput" placeholder="Sonuç" required>
+                    <span class="math-text" id="captchaQuestion">? + ? = ?</span>
+                    <input type="number" id="captchaInput" placeholder="Sonuç" required style="width: 100px; margin: 0;">
                 </div>
             </div>
 
@@ -146,30 +184,33 @@
     <div id="kvkkModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <div class="kvkk-title">KVKK Aydınlatma Metni</div>
-            <div class="kvkk-text">
-                <p><strong>1. Veri Sorumlusu</strong><br>
-                İngiliz Kültür Koleji olarak kişisel verilerinizi 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında aşağıda açıklanan amaçlarla işlemekteyiz.</p>
+            <h3 style="color:var(--secondary); margin-top:0;">KVKK Aydınlatma Metni</h3>
+            <div class="kvkk-body">
+                <p><strong>İngiliz Kültür Koleji</strong> ("Kurum") olarak kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu bilinçle, Kurum ile ilişkili tüm şahıslara ait her türlü kişisel verilerin 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVK Kanunu")'na uygun olarak işlenerek, muhafaza edilmesine büyük önem vermekteyiz.</p>
+
+                <h4>1. Veri Sorumlusu</h4>
+                <p>KVK Kanunu uyarınca, kişisel verileriniz; veri sorumlusu olarak İngiliz Kültür Koleji tarafından aşağıda açıklanan kapsamda işlenebilecektir.</p>
+
+                <h4>2. Kişisel Verilerin İşlenme Amacı</h4>
+                <p>Toplanan kişisel verileriniz (Ad, Soyad, İletişim Bilgileri, Öğrenci Bilgileri); randevu süreçlerinin planlanması ve icrası, eğitim hizmetlerimiz hakkında bilgilendirme yapılması ve sizinle iletişim kurulması amaçlarıyla işlenmektedir.</p>
+
+                <h4>3. İşlenen Kişisel Verilerin Kimlere ve Hangi Amaçla Aktarılabileceği</h4>
+                <p>Kişisel verileriniz, kanunen yetkili kamu kurumları ve özel kişiler dışında hiçbir üçüncü taraf ile paylaşılmamaktadır.</p>
+
+                <h4>4. Kişisel Veri Toplamanın Yöntemi ve Hukuki Sebebi</h4>
+                <p>Kişisel verileriniz, internet sitemizdeki başvuru formu aracılığıyla elektronik ortamda toplanmaktadır. Bu süreçte verileriniz, "ilgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla, veri sorumlusunun meşru menfaatleri için veri işlenmesinin zorunlu olması" hukuki sebebine dayanarak işlenmektedir.</p>
+
+                <h4>5. Veri Sahibinin Hakları</h4>
+                <p>KVK Kanunu'nun 11. maddesi uyarınca veri sahipleri; kişisel verilerinin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, verilerin düzeltilmesini veya silinmesini isteme haklarına sahiptir.</p>
                 
-                <p><strong>2. İşlenen Kişisel Veriler</strong><br>
-                Randevu oluşturma sürecinde; Adınız, Soyadınız, Telefon Numaranız ve Öğrenci Bilgileriniz işlenmektedir.</p>
-                
-                <p><strong>3. İşleme Amacı</strong><br>
-                Bu veriler, randevu oluşturmak, sizinle iletişime geçmek ve eğitim hizmetlerimiz hakkında bilgi vermek amacıyla işlenmektedir.</p>
-                
-                <p><strong>4. Veri Aktarımı</strong><br>
-                Kişisel verileriniz yasal zorunluluklar dışında üçüncü kişilerle paylaşılmamaktadır.</p>
-                
-                <p><strong>5. Haklarınız</strong><br>
-                KVKK'nın 11. maddesi gereği verilerinizin silinmesini veya düzeltilmesini talep etme hakkına sahipsiniz.</p>
-                
-                <p><em>(Not: Bu metin standart bir örnektir. Lütfen kurumunuzun resmi hukuk metni ile güncelleyiniz.)</em></p>
+                <br>
+                <p style="text-align: center; font-weight:bold; color:var(--primary);">Onaylamak için bu pencereyi kapatıp kutucuğu işaretleyiniz.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // URL'NİZİ BURAYA YAPIŞTIRIN
+        // URL'NİZ
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrgOTD9W4YDnNrIN-8xpg3RV--XaRpOuM8o-FVlp2_zgwglBSueTkvPiErV61wW1w-/exec';
 
         const dateInput = document.getElementById('randevuTarihi');
@@ -177,9 +218,9 @@
         const roomInput = document.getElementById('secilenOda');
         const phoneInput = document.getElementById('phoneInput');
         
-        // KVKK Modal İşlemleri
+        // --- KVKK MODAL KODLARI ---
         const modal = document.getElementById("kvkkModal");
-        const btnLink = document.getElementById("kvkkLink");
+        const btnLink = document.getElementById("kvkkOpenBtn");
         const span = document.getElementsByClassName("close-btn")[0];
 
         btnLink.onclick = function(e) {
@@ -191,7 +232,7 @@
             if (event.target == modal) { modal.style.display = "none"; }
         }
 
-        // Captcha Hazırlık
+        // --- CAPTCHA ---
         let captchaResult = 0;
         function generateCaptcha() {
             const n1 = Math.floor(Math.random() * 10) + 1;
@@ -206,6 +247,7 @@
         dateInput.setAttribute('min', `${currentYear}-12-01`);
         dateInput.setAttribute('max', `${currentYear + 1}-01-01`);
 
+        // Telefon Formatlama
         phoneInput.addEventListener('input', function (e) {
             var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
             e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '') + (x[4] ? ' ' + x[4] : '');
@@ -288,7 +330,7 @@
             
             if(!roomInput.value) { alert("Lütfen bir oda seçiniz."); return; }
 
-            // GÜVENLİK KONTROLLERİ
+            // GÜVENLİK
             const captchaVal = parseInt(document.getElementById('captchaInput').value);
             if(captchaVal !== captchaResult) {
                 msg.innerHTML = '⚠️ Matematik sorusu yanlış! Tekrar deneyin.';
