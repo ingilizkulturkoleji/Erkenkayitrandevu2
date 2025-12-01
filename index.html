@@ -25,14 +25,38 @@
         .flex-group { display: flex; gap: 15px; }
         .flex-group > div { flex: 1; }
         @media (max-width: 480px) { .flex-group { flex-direction: column; } }
+        
         .room-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px; margin-bottom: 25px; }
         .room-card { background: #fff; border: 2px solid var(--border-light); border-radius: 12px; padding: 15px 5px; text-align: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 600; color: var(--text-muted); font-size: 0.85rem; position: relative; overflow: hidden; }
         .room-card:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-3px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
         .room-card.selected { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-color: transparent; box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.4); transform: translateY(-3px); }
         .hidden-room { display: none !important; }
+
+        /* GÜVENLİK KUTUSU STİLİ */
+        .security-section {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+        }
+        .captcha-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .captcha-question {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            user-select: none;
+        }
+        
         button#submitButton { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; border-radius: 14px; font-size: 17px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 15px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
         button#submitButton:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); filter: brightness(1.1); }
         button:disabled { background: var(--border-light); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        
         #statusMessage { text-align: center; margin-top: 25px; padding: 18px; border-radius: 12px; font-weight: 600; display: none; font-size: 0.95rem; }
         .success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid #a7f3d0; }
         .error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid #fecaca;}
@@ -60,7 +84,7 @@
                 <div>
                     <label>Öğrenci Sınıfı</label>
                     <select name="ogrenciSinifi" required>
-                        <option value="">Sınıf Seçiniz</option>
+                        <option value="">Seçiniz</option>
                         <option value="Anaokulu">Anaokulu</option>
                         <option value="1. Sınıf">1. Sınıf</option>
                         <option value="2. Sınıf">2. Sınıf</option>
@@ -74,7 +98,7 @@
                 </div>
                 <div>
                     <label>Telefon Numarası</label>
-                    <input type="tel" name="telefon" required placeholder="05XX XXX XX XX">
+                    <input type="tel" id="telefonInput" name="telefon" required placeholder="(5XX) XXX XX XX" maxlength="15">
                 </div>
             </div>
             <div class="form-group">
@@ -98,20 +122,51 @@
                     <option value="">Önce Tarih ve Oda Seçiniz</option>
                 </select>
             </div>
+
+            <div class="security-section">
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                    <input type="checkbox" id="veliApproval" required style="width:20px; height:20px;"> 
+                    <span>Öğrencinin yasal velisi olduğumu onaylıyorum.</span>
+                </label>
+                
+                <div class="captcha-group">
+                    <span class="captcha-question" id="mathQuestion">3 + 5 = ?</span>
+                    <input type="number" id="mathAnswer" required placeholder="Sonuç" style="width: 100px; margin:0;">
+                </div>
+            </div>
+
             <button type="submit" id="submitButton">Randevuyu Onayla</button>
             <div id="statusMessage"></div>
         </form>
     </div>
 
     <script>
-        // SİZİN VERDİĞİNİZ YENİ URL BURAYA EKLENDİ
+        // URL'NİZ
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrgOTD9W4YDnNrIN-8xpg3RV--XaRpOuM8o-FVlp2_zgwglBSueTkvPiErV61wW1w-/exec';
 
         const dateInput = document.getElementById('randevuTarihi');
         const timeSelect = document.getElementById('randevuSaati');
         const roomInput = document.getElementById('secilenOda');
+        const telefonInput = document.getElementById('telefonInput');
         let currentBookings = []; 
 
+        // 1. CAPTCHA MANTIĞI
+        let captchaResult = 0;
+        function generateCaptcha() {
+            const n1 = Math.floor(Math.random() * 10) + 1; // 1-10 arası sayı
+            const n2 = Math.floor(Math.random() * 10) + 1;
+            captchaResult = n1 + n2;
+            document.getElementById('mathQuestion').textContent = `${n1} + ${n2} = ?`;
+        }
+        generateCaptcha(); // Sayfa açılınca soru sor
+
+        // 2. TELEFON FORMATLAMA VE KISITLAMA
+        telefonInput.addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '') + (x[4] ? ' ' + x[4] : '');
+        });
+
+        // Tarih Ayarları
         const currentYear = new Date().getFullYear();
         const minDate = `${currentYear}-12-01`;
         const maxDate = `${currentYear + 1}-01-01`;
@@ -142,11 +197,9 @@
             if (dayOfWeek === 0) { // PAZAR
                 roomManchester.classList.add('hidden-room');
                 roomOxford.classList.add('hidden-room');
-            } 
-            else if (dayOfWeek === 6) { // CUMARTESİ
+            } else if (dayOfWeek === 6) { // CUMARTESİ
                 // Hepsi açık
-            } 
-            else { // HAFTA İÇİ
+            } else { // HAFTA İÇİ
                 roomLiverpool.classList.add('hidden-room');
             }
 
@@ -219,22 +272,33 @@
 
         document.getElementById('appointmentForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const odaSecimi = document.getElementById('secilenOda').value;
-            const saatSecimi = document.getElementById('randevuSaati').value;
             const msg = document.getElementById('statusMessage');
+            
+            // --- GÜVENLİK KONTROLLERİ ---
+            
+            // 1. Oda ve Saat Seçimi
+            if (!document.getElementById('secilenOda').value || document.getElementById('randevuSaati').value === "") {
+                msg.innerHTML = '⚠️ Lütfen Oda ve Saat seçiniz!';
+                msg.className = 'error'; msg.style.display = 'block'; return;
+            }
 
-            if (!odaSecimi || odaSecimi === "") {
-                msg.innerHTML = '⚠️ Lütfen bir <b>Görüşme Odası</b> seçiniz!';
-                msg.className = 'error';
-                msg.style.display = 'block';
+            // 2. Telefon Kontrolü (Uzunluk)
+            // (555) 555 55 55 formatı 15 karakterdir
+            if (telefonInput.value.length < 14) {
+                msg.innerHTML = '⚠️ Lütfen geçerli bir telefon numarası giriniz.';
+                msg.className = 'error'; msg.style.display = 'block'; return;
+            }
+
+            // 3. Matematik Kontrolü
+            const userAnswer = parseInt(document.getElementById('mathAnswer').value);
+            if (userAnswer !== captchaResult) {
+                msg.innerHTML = '⚠️ Güvenlik sorusu yanlış! Lütfen tekrar deneyiniz.';
+                msg.className = 'error'; msg.style.display = 'block'; 
+                generateCaptcha(); // Soruyu değiştir
+                document.getElementById('mathAnswer').value = '';
                 return;
             }
-            if (!saatSecimi || saatSecimi === "") {
-                msg.innerHTML = '⚠️ Lütfen bir <b>Randevu Saati</b> seçiniz!';
-                msg.className = 'error';
-                msg.style.display = 'block';
-                return;
-            }
+            // ---------------------------
 
             const btn = document.getElementById('submitButton');
             btn.disabled = true;
@@ -256,10 +320,11 @@
                     msg.style.display = 'block';
                     dateInput.dispatchEvent(new Event('change')); 
                 } else {
-                    msg.innerHTML = '✅ Kaydınız başarıyla oluşturuldu! Teşekkürler.';
+                    msg.innerHTML = '✅ Kaydınız başarıyla oluşturuldu! Sizi arayacağız.';
                     msg.className = 'success';
                     msg.style.display = 'block';
                     this.reset();
+                    generateCaptcha(); // Yeni soru hazırla
                     document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
                     document.getElementById('room-liverpool').classList.add('hidden-room'); 
                     document.getElementById('room-manchester').classList.remove('hidden-room');
@@ -272,7 +337,7 @@
             })
             .catch(error => {
                 console.error(error);
-                msg.textContent = 'Bağlantı hatası oluştu. Lütfen tekrar deneyin.';
+                msg.textContent = 'Bağlantı hatası oluştu.';
                 msg.className = 'error';
                 msg.style.display = 'block';
             })
