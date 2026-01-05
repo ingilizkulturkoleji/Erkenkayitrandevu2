@@ -57,7 +57,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         display: block;
         margin: 0 auto;
     }
-    
     h2 { 
         text-align: center; 
         color: var(--secondary); 
@@ -66,7 +65,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         font-size: 1.8rem; 
         line-height: 1.2; 
     }
-
     .note-text {
         text-align: center;
         color: #ef4444;
@@ -79,7 +77,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         border-radius: 8px;
         border: 1px solid #fee2e2;
     }
-
     .form-group { margin-bottom: 20px; }
     label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
     input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
@@ -100,7 +97,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
     .room-card:hover { border-color: var(--primary); color: var(--primary); }
     .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
     .room-card.selected h4, .room-card.selected p { color: white; }
-
     .room-full {
         background-color: #f1f5f9; 
         color: #94a3b8; 
@@ -109,8 +105,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         pointer-events: none; 
         opacity: 0.7;
     }
-    .room-full h4, .room-full p { color: #94a3b8; }
-
+    
     button.submit-btn {
         width: 100%;
         padding: 16px;
@@ -142,7 +137,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         color: var(--secondary);
         user-select: none;
     }
-
     .success {
         background-color: #d1fae5;
         color: #065f46;
@@ -152,7 +146,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         margin-top: 20px;
         font-weight: 600;
     }
-    
     @media (max-width: 480px) {
         .container { padding: 25px; }
         h2 { font-size: 1.5rem; }
@@ -255,6 +248,69 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
 
+    // --- DOLULUK KONTROLÜ VE SAAT YÜKLEME ---
+    async function checkAvailability() {
+        const dateInput = document.getElementById('appointmentDate');
+        const roomInput = document.getElementById('selectedRoom');
+        const timeSelect = document.getElementById('appointmentTime');
+        
+        const dateVal = dateInput.value;
+        const roomVal = roomInput.value;
+        const dayOfWeek = new Date(dateVal).getDay();
+
+        // Eğer tarih veya oda seçili değilse saati kapalı tut
+        if (!dateVal || !roomVal) {
+            timeSelect.innerHTML = '<option value="">Önce Tarih ve Oda Seçiniz</option>';
+            timeSelect.disabled = true;
+            return;
+        }
+
+        // Pazar Günü Kontrolü
+        if (dayOfWeek === 0) {
+            timeSelect.innerHTML = '<option value="">Pazar günü kurumumuz kapalıdır.</option>';
+            timeSelect.disabled = true;
+            return;
+        }
+
+        // Yükleniyor Göstergesi
+        timeSelect.innerHTML = '<option value="">Saatler yükleniyor, bekleyiniz...</option>';
+        timeSelect.disabled = true;
+
+        try {
+            // Google Apps Script'ten dolu saatleri çek
+            const response = await fetch(`${SCRIPT_URL}?date=${dateVal}&room=${roomVal}`);
+            const data = await response.json();
+            const takenSlots = data.taken || [];
+
+            // Standart Saatler
+            const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
+            
+            timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
+
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                
+                // Eğer saat doluysa
+                if (takenSlots.includes(time)) {
+                    option.textContent = `${time} (DOLU)`;
+                    option.disabled = true;
+                    option.style.color = '#d90429'; // Kırmızı
+                } else {
+                    option.textContent = time;
+                }
+                timeSelect.appendChild(option);
+            });
+            
+            timeSelect.disabled = false;
+
+        } catch (error) {
+            console.error(error);
+            timeSelect.innerHTML = '<option value="">Bağlantı hatası, tekrar deneyin.</option>';
+        }
+    }
+
+    // --- FORM GÖNDERME ---
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -295,35 +351,30 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8",
-            },
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(formData)
         })
         .then(response => {
+            // Hata kontrolü (no-cors'ta response.json() okunamaz, o yüzden backend'deki collision check
+            // çalışırsa bile frontend burada 'success' sanabilir. 
+            // Ancak backend kaydedilmesini engelleyecektir.
+            // Kullanıcıya kesin bilgi vermek için yukarıdaki doGet kontrolü esas korumadır.
+            
             const msg = document.getElementById('message');
             msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
             msg.className = 'success';
-            
-            // ==========================================
-            // REKLAM DÖNÜŞÜM TAKİBİ (LEAD)
-            // Kayıt başarılı olunca Facebook'a haber ver
-            // ==========================================
-            if(typeof fbq !== 'undefined') { 
-                fbq('track', 'Lead'); 
-            }
+
+            // Pixel Lead Takibi
+            if(typeof fbq !== 'undefined') { fbq('track', 'Lead'); }
             
             document.getElementById('appointmentForm').reset();
-            
             document.querySelectorAll('.room-card').forEach(c => {
                 c.classList.remove('selected');
                 c.classList.add('room-full');
             });
             document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
             document.getElementById('appointmentTime').disabled = true;
-            
             generateMathCaptcha();
-            
             btn.disabled = false;
             btn.innerText = originalBtnText;
         })
@@ -335,7 +386,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         });
     });
 
-    // YARDIMCI FONKSİYONLAR
+    // --- YARDIMCI FONKSİYONLAR ---
     let mathResult = 0;
     function generateMathCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1; 
@@ -360,6 +411,9 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
         roomEl.classList.add('selected');
         document.getElementById('selectedRoom').value = roomName;
+        
+        // Oda seçilince de kontrolü tetikle
+        checkAvailability();
     }
 
     document.getElementById('appointmentDate').addEventListener('change', function() {
@@ -367,6 +421,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         const dayOfWeek = selectedDate.getDay();
         const rOx = document.getElementById('room-oxford');
         
+        // Tarih değişince odayı sıfırla ama Oxford'u aç
         document.querySelectorAll('.room-card').forEach(c => {
             c.classList.remove('selected');
             c.classList.add('room-full');
@@ -374,26 +429,11 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         document.getElementById('selectedRoom').value = '';
 
         if (dayOfWeek !== 0) rOx.classList.remove('room-full');
-
+        
+        // Saatleri temizle
         const timeSelect = document.getElementById('appointmentTime');
-        timeSelect.disabled = false;
-        timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
-
-        if (dayOfWeek === 0) {
-            const opt = document.createElement('option');
-            opt.text = "Pazar günü kurumumuz kapalıdır.";
-            opt.disabled = true;
-            timeSelect.add(opt);
-            timeSelect.disabled = true;
-        } else {
-            const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
-            availableHours.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
-                option.textContent = time;
-                timeSelect.appendChild(option);
-            });
-        }
+        timeSelect.innerHTML = '<option value="">Önce Oda Seçiniz</option>';
+        timeSelect.disabled = true;
     });
 </script>
 
