@@ -35,8 +35,12 @@
         text-align: center;
         margin-bottom: 20px;
     }
+    /* Logo Ayarları */
     .logo-area img {
-        max-width: 180px;
+        max-width: 200px; /* Logo boyutunu buradan ayarlayabilirsin */
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
     
     h2 { 
@@ -147,7 +151,7 @@
 
 <div class="container">
     <div class="logo-area">
-        <h3 style="color:var(--primary); margin:0;">İNGİLİZ KÜLTÜR KOLEJİ</h3>
+        <img src="https://upload.wikimedia.org/wikipedia/tr/b/b3/%C4%B0ngiliz_K%C3%3Clt%C3%BCr_Derne%C4%9Fi_Dil_Okullar%C4%B1_logosu.png" alt="İngiliz Kültür Koleji Logo">
     </div>
 
     <h2>Yeni Kayıt Randevusu</h2>
@@ -237,11 +241,9 @@
 </div>
 
 <script>
-    // --- DOLULUK SİMÜLASYONU ---
-    const takenSlots = {
-        '2026-01-06': ['09:30', '14:30'], // Örnek dolu saatler
-        '2026-01-07': ['10:30']
-    };
+    // --- DOLULUK SİMÜLASYONU (TEMİZLENDİ) ---
+    // Artık tüm saatler boş gözükecek
+    const takenSlots = {};
 
     let captchaCode = '';
 
@@ -258,9 +260,15 @@
     window.onload = function() {
         generateCaptcha();
         
-        // Tarih seçiciye bugünü min tarih olarak ekle
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('appointmentDate').setAttribute('min', today);
+        // --- TARİH KISITLAMASI (BUGÜN VE SONRASI) ---
+        // Yerel saati doğru alması için güncellendi
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        
+        document.getElementById('appointmentDate').setAttribute('min', todayStr);
     };
 
     // --- ODA SEÇİMİ ---
@@ -317,7 +325,7 @@
                 const option = document.createElement('option');
                 option.value = time;
                 
-                // Doluluk Kontrolü
+                // Doluluk Kontrolü (Artık takenSlots boş olduğu için hepsi boş gelecek)
                 let isFull = false;
                 if (takenSlots[dateString] && takenSlots[dateString].includes(time)) {
                     isFull = true;
