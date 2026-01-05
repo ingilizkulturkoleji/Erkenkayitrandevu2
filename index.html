@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>İngiliz Kültür Koleji - Yeni Kayıt</title>
+<title>İngiliz Kültür Koleji - Erken Kayıt</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --primary: #d90429; /* İngiliz Kültür Kırmızısı */
-        --secondary: #2b2d42; /* Koyu Lacivert */
+        --primary: #d90429; 
+        --secondary: #2b2d42; 
         --bg: #edf2f4;
     }
     body {
@@ -86,7 +86,6 @@
     .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
     .room-card.selected h4, .room-card.selected p { color: white; }
 
-    /* DOLU ODA STİLİ */
     .room-full {
         background-color: #f1f5f9; 
         color: #94a3b8; 
@@ -119,7 +118,6 @@
         padding: 10px; 
         border-radius: 8px; 
         font-weight: 800; 
-        letter-spacing: 5px; 
         text-align: center;
         flex: 1;
         display: flex;
@@ -153,7 +151,7 @@
         <img src="https://i.ibb.co/bgx6xhMQ/ikk-LOGO-PNG.png" alt="İngiliz Kültür Koleji Logo">
     </div>
 
-    <h2>Yeni Kayıt Randevusu</h2>
+    <h2>Erken Kayıt Randevusu</h2>
     
     <div class="note-text">
         ⚠️ Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.
@@ -227,10 +225,10 @@
         </div>
 
         <div class="form-group">
-            <label>Güvenlik Doğrulaması</label>
+            <label>Güvenlik Sorusu (Robot Olmadığınızı Doğrulayın)</label>
             <div class="captcha-group">
                 <div class="captcha-display" id="captchaDisplay"></div>
-                <input type="text" id="captchaInput" placeholder="Kodu giriniz" required style="width: 50%;">
+                <input type="number" id="captchaInput" placeholder="Sonucu giriniz" required style="width: 50%;">
             </div>
         </div>
 
@@ -240,26 +238,27 @@
 </div>
 
 <script>
-    // --- GÜNCEL SCRIPT ADRESİN ---
+    // --- GÜNCEL SCRIPT ADRESİN (Burası aynı kalabilir) ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
 
     // --- FORM GÖNDERME İŞLEMİ ---
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Butonu kilitle ve "İşleniyor..." yaz
+        // Butonu kilitle
         const btn = document.querySelector('.submit-btn');
         const originalBtnText = btn.innerText;
         btn.disabled = true;
         btn.innerText = "İşleniyor...";
 
-        const userCaptcha = document.getElementById('captchaInput').value.toUpperCase();
+        const userCaptcha = parseInt(document.getElementById('captchaInput').value);
         const room = document.getElementById('selectedRoom').value;
 
-        // Captcha Kontrolü
-        if (userCaptcha !== captchaCode) {
-            alert('Güvenlik kodu hatalı! Lütfen tekrar deneyiniz.');
-            generateCaptcha();
+        // MATEMATİK CAPTCHA KONTROLÜ
+        if (userCaptcha !== mathResult) {
+            alert('Matematik işleminin sonucu yanlış! Lütfen tekrar deneyiniz.');
+            generateMathCaptcha();
+            document.getElementById('captchaInput').value = '';
             btn.disabled = false;
             btn.innerText = originalBtnText;
             return;
@@ -287,14 +286,13 @@
         // Google Sheets'e Veri Gönderme
         fetch(SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors", // Google Script ile iletişimde standart mod
+            mode: "no-cors",
             headers: {
                 "Content-Type": "text/plain;charset=utf-8",
             },
             body: JSON.stringify(formData)
         })
         .then(response => {
-            // Başarılı olduğunda
             const msg = document.getElementById('message');
             msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
             msg.className = 'success';
@@ -310,33 +308,32 @@
             document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
             document.getElementById('appointmentTime').disabled = true;
             
-            generateCaptcha();
+            generateMathCaptcha(); // Yeni soru üret
             
-            // Butonu eski haline getir
             btn.disabled = false;
             btn.innerText = originalBtnText;
         })
         .catch(error => {
             console.error('Hata:', error);
-            alert("Bir bağlantı hatası oluştu, lütfen internetinizi kontrol edip tekrar deneyin.");
+            alert("Bir bağlantı hatası oluştu.");
             btn.disabled = false;
             btn.innerText = originalBtnText;
         });
     });
 
     // --- YARDIMCI FONKSİYONLAR ---
-    let captchaCode = '';
-    function generateCaptcha() {
-        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        captchaCode = '';
-        for (let i = 0; i < 5; i++) {
-            captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        document.getElementById('captchaDisplay').innerText = captchaCode;
+    
+    // YENİ MATEMATİK CAPTCHA FONKSİYONU
+    let mathResult = 0;
+    function generateMathCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1; // 1-10 arası
+        const num2 = Math.floor(Math.random() * 10) + 1; // 1-10 arası
+        mathResult = num1 + num2;
+        document.getElementById('captchaDisplay').innerText = `${num1} + ${num2} = ?`;
     }
 
     window.onload = function() {
-        generateCaptcha();
+        generateMathCaptcha();
         const date = new Date();
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
