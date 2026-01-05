@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>İngiliz Kültür Koleji - Erken Kayıt</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1233557722304266');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
+/></noscript>
 <style>
     :root {
         --primary: #d90429; 
@@ -69,7 +85,6 @@
     input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
     input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.1); }
     
-    /* GÖRÜŞME ODALARI */
     .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
     .room-card {
         border: 2px solid #e2e8f0;
@@ -238,14 +253,11 @@
 </div>
 
 <script>
-    // --- GÜNCEL SCRIPT ADRESİN (Burası aynı kalabilir) ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
 
-    // --- FORM GÖNDERME İŞLEMİ ---
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Butonu kilitle
         const btn = document.querySelector('.submit-btn');
         const originalBtnText = btn.innerText;
         btn.disabled = true;
@@ -254,7 +266,6 @@
         const userCaptcha = parseInt(document.getElementById('captchaInput').value);
         const room = document.getElementById('selectedRoom').value;
 
-        // MATEMATİK CAPTCHA KONTROLÜ
         if (userCaptcha !== mathResult) {
             alert('Matematik işleminin sonucu yanlış! Lütfen tekrar deneyiniz.');
             generateMathCaptcha();
@@ -264,7 +275,6 @@
             return;
         }
 
-        // Oda Seçim Kontrolü
         if (!room) {
             alert('Lütfen bir görüşme odası seçiniz.');
             btn.disabled = false;
@@ -272,7 +282,6 @@
             return;
         }
 
-        // Gönderilecek Veri Paketi
         const formData = {
             veliAdiSoyadi: document.getElementById('parentName').value,
             telefon: document.getElementById('phone').value,
@@ -283,7 +292,6 @@
             randevuSaati: document.getElementById('appointmentTime').value
         };
 
-        // Google Sheets'e Veri Gönderme
         fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
@@ -297,10 +305,16 @@
             msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
             msg.className = 'success';
             
-            // Formu temizle
+            // ==========================================
+            // REKLAM DÖNÜŞÜM TAKİBİ (LEAD)
+            // Kayıt başarılı olunca Facebook'a haber ver
+            // ==========================================
+            if(typeof fbq !== 'undefined') { 
+                fbq('track', 'Lead'); 
+            }
+            
             document.getElementById('appointmentForm').reset();
             
-            // Odayı ve saati tekrar kilitle
             document.querySelectorAll('.room-card').forEach(c => {
                 c.classList.remove('selected');
                 c.classList.add('room-full');
@@ -308,7 +322,7 @@
             document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
             document.getElementById('appointmentTime').disabled = true;
             
-            generateMathCaptcha(); // Yeni soru üret
+            generateMathCaptcha();
             
             btn.disabled = false;
             btn.innerText = originalBtnText;
@@ -321,13 +335,11 @@
         });
     });
 
-    // --- YARDIMCI FONKSİYONLAR ---
-    
-    // YENİ MATEMATİK CAPTCHA FONKSİYONU
+    // YARDIMCI FONKSİYONLAR
     let mathResult = 0;
     function generateMathCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1; // 1-10 arası
-        const num2 = Math.floor(Math.random() * 10) + 1; // 1-10 arası
+        const num1 = Math.floor(Math.random() * 10) + 1; 
+        const num2 = Math.floor(Math.random() * 10) + 1; 
         mathResult = num1 + num2;
         document.getElementById('captchaDisplay').innerText = `${num1} + ${num2} = ?`;
     }
