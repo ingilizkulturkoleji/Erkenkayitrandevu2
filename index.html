@@ -1,423 +1,377 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İngiliz Kültür Koleji - Yeni Kayıt</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #ea580c; --primary-dark: #c2410c;
-            --secondary: #1e3a8a; --bg: #f8fafc; --white: #ffffff;
-            --promo-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #334155; }
-        
-        .container { 
-            background-color: var(--white); 
-            padding: 40px; 
-            border-radius: 24px; 
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); 
-            width: 100%; 
-            max-width: 500px; 
-            border-top: 6px solid var(--secondary); 
-            position: relative; 
-        }
-        
-        .logo { display: block; max-width: 180px; margin: 0 auto 20px; }
-        
-        /* KAMPANYA KUTUSU */
-        .promo-box {
-            background: var(--promo-gradient);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4);
-            border: 2px solid white;
-            outline: 2px solid #f59e0b;
-            transform: scale(1.02);
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
-        .promo-box strong {
-            display: block;
-            font-size: 1.3rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-top: 5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İngiliz Kültür Koleji - Yeni Kayıt</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #d90429; /* İngiliz Kültür Kırmızısı */
+        --secondary: #2b2d42; /* Koyu Lacivert */
+        --bg: #edf2f4;
+    }
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+    .container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 500px;
+        position: relative;
+        overflow: hidden;
+    }
+    .logo-area {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo-area img {
+        max-width: 180px;
+    }
+    
+    h2 { 
+        text-align: center; 
+        color: var(--secondary); 
+        margin-bottom: 10px; 
+        font-weight: 800; 
+        font-size: 1.8rem; 
+        line-height: 1.2; 
+    }
 
-        h2 { text-align: center; color: var(--secondary); margin-bottom: 10px; font-weight: 800; font-size: 1.8rem; line-height: 1.2; }
-        
-        /* YENİ EKLENEN NOT STİLİ */
-        .note-text {
-            text-align: center;
-            color: #ef4444; /* Kırmızıya yakın dikkat çekici renk */
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-top: 0;
-            margin-bottom: 30px;
-            background-color: #fef2f2;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #fee2e2;
-        }
+    /* ÖNEMLİ NOT ALANI */
+    .note-text {
+        text-align: center;
+        color: #ef4444;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 30px;
+        background-color: #fef2f2;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #fee2e2;
+    }
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
-        input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
-        input:focus, select:focus { border-color: var(--primary); outline: none; background-color: #fff7ed; }
-        
-        /* ODA KARTLARI */
-        .room-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .room-card { background: #fff; border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; cursor: pointer; font-weight: 600; color: #64748b; font-size: 0.9rem; transition: 0.2s; }
-        .room-card:hover { border-color: var(--primary); color: var(--primary); }
-        .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
-        
-        /* DOLU ODA STİLİ */
-        .room-full {
-            background-color: #f1f5f9; 
-            color: #94a3b8; 
-            border-color: #e2e8f0;
-            cursor: not-allowed; 
-            pointer-events: none; 
-            opacity: 0.7;
-        }
-        .room-full::after {
-            content: ' (DOLU)';
-            color: #ef4444; 
-            font-size: 0.75rem;
-            display: block;
-            margin-top: 2px;
-        }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
+    input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
+    input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.1); }
+    
+    /* GÖRÜŞME ODALARI */
+    .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .room-card {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        background: white;
+    }
+    .room-card h4 { margin: 0 0 5px; font-size: 1rem; color: var(--secondary); }
+    .room-card p { margin: 0; font-size: 0.8rem; color: #64748b; }
+    .room-card:hover { border-color: var(--primary); color: var(--primary); }
+    .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
+    .room-card.selected h4, .room-card.selected p { color: white; }
 
-        /* GÜVENLİK KUTUSU */
-        .security-box { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; border-left: 5px solid var(--primary); }
-        .checkbox-wrapper { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.4; cursor: pointer; }
-        .checkbox-wrapper input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: var(--primary); }
-        .kvkk-link { color: var(--primary); font-weight: 700; text-decoration: underline; cursor: pointer; }
-        .math-captcha { display: flex; align-items: center; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #cbd5e1; }
-        .math-text { font-weight: 800; color: var(--secondary); font-size: 1.2rem; user-select: none; }
+    /* DOLU ODA STİLİ */
+    .room-full {
+        background-color: #f1f5f9; 
+        color: #94a3b8; 
+        border-color: #e2e8f0;
+        cursor: not-allowed; 
+        pointer-events: none; 
+        opacity: 0.7;
+    }
+    .room-full h4, .room-full p { color: #94a3b8; }
 
-        button#submitButton { width: 100%; padding: 18px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3); }
-        button#submitButton:hover:not(:disabled) { background-color: var(--primary-dark); transform: translateY(-2px); }
-        button:disabled { background-color: #cbd5e1; cursor: not-allowed; box-shadow: none; transform: none; }
+    button.submit-btn {
+        width: 100%;
+        padding: 16px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+    button.submit-btn:hover { background-color: #b90324; transform: translateY(-2px); }
+    
+    .captcha-group { display: flex; gap: 10px; }
+    .captcha-display { 
+        background: #e2e8f0; 
+        padding: 10px; 
+        border-radius: 8px; 
+        font-weight: 800; 
+        letter-spacing: 5px; 
+        text-align: center;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--secondary);
+        user-select: none;
+    }
 
-        #statusMessage { text-align: center; margin-top: 20px; padding: 15px; border-radius: 10px; font-weight: 600; display: none; }
-        .success { background-color: #dcfce7; color: #166534; }
-        .error { background-color: #fee2e2; color: #991b1b; }
-
-        /* KVKK MODAL */
-        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 30px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-        .close-btn { color: #64748b; float: right; font-size: 32px; font-weight: bold; cursor: pointer; line-height: 20px; }
-        .close-btn:hover { color: #000; }
-        .kvkk-body { max-height: 60vh; overflow-y: auto; font-size: 0.85rem; line-height: 1.6; color: #334155; padding: 15px; background: #f1f5f9; border-radius: 8px; margin-top: 15px; text-align: justify; }
-        .kvkk-body h4 { color: var(--secondary); margin-bottom: 5px; margin-top: 15px; }
-    </style>
+    .success {
+        background-color: #d1fae5;
+        color: #065f46;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        margin-top: 20px;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 480px) {
+        .container { padding: 25px; }
+        h2 { font-size: 1.5rem; }
+    }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <img src="https://i.hizliresim.com/6eldhh1.png" alt="Okul Logosu" class="logo">
-        
-        <div class="promo-box">
-            2026 - 2027 Eğitim Öğretim Döneminde
-            <strong>EĞİTİM ÜCRETİNE ZAM YOK!</strong>
-        </div>
-
-        <h2>Yeni Kayıt Randevusu</h2>
-        <div class="note-text">
-            ⚠️ Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.
-        </div>
-        
-        <form id="appointmentForm">
-            <div class="form-group">
-                <label>Veli Adı Soyadı</label>
-                <input type="text" name="veliAdiSoyadi" required placeholder="Adınız Soyadınız">
-            </div>
-
-            <div class="form-group">
-                <label>Öğrenci Adı Soyadı</label>
-                <input type="text" name="ogrenciAdiSoyadi" required placeholder="Öğrencinin Adı">
-            </div>
-            
-            <div class="form-group">
-                <label>İletişim Numarası</label>
-                <input type="tel" id="phoneInput" name="telefon" required placeholder="(5XX) XXX XX XX" maxlength="15">
-            </div>
-
-            <div class="form-group">
-                <label>Öğrenci Sınıfı</label>
-                <select name="ogrenciSinifi" required>
-                    <option value="">Sınıf Seçiniz</option>
-                    <option value="Anaokulu">Anaokulu</option>
-                    <option value="1. Sınıf">1. Sınıf</option>
-                    <option value="2. Sınıf">2. Sınıf</option>
-                    <option value="3. Sınıf">3. Sınıf</option>
-                    <option value="4. Sınıf">4. Sınıf</option>
-                    <option value="5. Sınıf">5. Sınıf</option>
-                    <option value="6. Sınıf">6. Sınıf</option>
-                    <option value="7. Sınıf">7. Sınıf</option>
-                    <option value="8. Sınıf">8. Sınıf</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Görüşme Tarihi</label>
-                <input type="date" id="randevuTarihi" name="randevuTarihi" required>
-            </div>
-
-            <div class="form-group">
-                <label>Müsait Danışman/Oda</label>
-                <div class="room-container">
-                    <div class="room-card room-full" id="room-manchester">Manchester</div>
-                    <div class="room-card room-full" id="room-liverpool">Liverpool</div>
-                    <div class="room-card room-full" id="room-cambridge">Cambridge</div>
-                    
-                    <div class="room-card" id="room-oxford" onclick="selectRoom('Oxford', this)">Oxford</div>
-                </div>
-                <input type="hidden" id="secilenOda" name="secilenOda">
-                <div id="roomWarning" style="display:none; color:red; font-size:0.8rem;">Lütfen tarih seçiniz.</div>
-            </div>
-
-            <div class="form-group">
-                <label>Randevu Saati</label>
-                <select id="randevuSaati" name="randevuSaati" required disabled>
-                    <option value="">Önce Oda Seçiniz</option>
-                </select>
-            </div>
-
-            <div class="security-box">
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" id="parentCheck" required>
-                    <span>Öğrencinin yasal velisi olduğumu onaylıyorum.</span>
-                </label>
-
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" id="kvkkCheck" required>
-                    <span>
-                        <span class="kvkk-link" id="kvkkOpenBtn">KVKK Aydınlatma Metni</span>'ni okudum ve onaylıyorum.
-                    </span>
-                </label>
-                
-                <div class="math-captcha">
-                    <span class="math-text" id="captchaQuestion">? + ? = ?</span>
-                    <input type="number" id="captchaInput" placeholder="Sonuç" required style="width: 100px; margin: 0;">
-                </div>
-            </div>
-
-            <button type="submit" id="submitButton">Randevu Oluştur</button>
-            <div id="statusMessage"></div>
-        </form>
+<div class="container">
+    <div class="logo-area">
+        <h3 style="color:var(--primary); margin:0;">İNGİLİZ KÜLTÜR KOLEJİ</h3>
     </div>
 
-    <div id="kvkkModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3 style="color:var(--secondary); margin-top:0;">KVKK Aydınlatma Metni</h3>
-            <div class="kvkk-body">
-                <p><strong>İngiliz Kültür Koleji</strong> ("Kurum") olarak kişisel verilerinizi KVK Kanunu'na uygun olarak işlemekteyiz.</p>
-                <h4>1. Veri Sorumlusu</h4>
-                <p>Kişisel verileriniz, İngiliz Kültür Koleji tarafından işlenmektedir.</p>
-                <h4>2. Amaçlar</h4>
-                <p>Randevu oluşturma, iletişim kurma ve eğitim hizmetlerimiz hakkında bilgilendirme.</p>
-                <h4>3. Veri Aktarımı</h4>
-                <p>Verileriniz yasal zorunluluklar dışında üçüncü kişilerle paylaşılmaz.</p>
-                <h4>4. Haklarınız</h4>
-                <p>Verilerinizin silinmesini veya düzeltilmesini talep etme hakkına sahipsiniz.</p>
-                <br>
-                <p style="text-align: center; font-weight:bold; color:var(--primary);">Onaylamak için bu pencereyi kapatıp kutucuğu işaretleyiniz.</p>
-            </div>
-        </div>
+    <h2>Yeni Kayıt Randevusu</h2>
+    
+    <div class="note-text">
+        ⚠️ Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.
     </div>
 
-    <script>
-        // SİZİN URL'NİZ
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrgOTD9W4YDnNrIN-8xpg3RV--XaRpOuM8o-FVlp2_zgwglBSueTkvPiErV61wW1w-/exec';
+    <form id="appointmentForm">
+        <div class="form-group">
+            <label>Veli Adı Soyadı</label>
+            <input type="text" id="parentName" placeholder="Örn: Ahmet Yılmaz" required>
+        </div>
 
-        const dateInput = document.getElementById('randevuTarihi');
-        const timeSelect = document.getElementById('randevuSaati');
-        const roomInput = document.getElementById('secilenOda');
-        const phoneInput = document.getElementById('phoneInput');
+        <div class="form-group">
+            <label>Telefon Numarası</label>
+            <input type="tel" id="phone" placeholder="05XX XXX XX XX" required>
+        </div>
         
-        // --- KVKK MODAL ---
-        const modal = document.getElementById("kvkkModal");
-        const btnLink = document.getElementById("kvkkOpenBtn");
-        const span = document.getElementsByClassName("close-btn")[0];
-        btnLink.onclick = function(e) { e.preventDefault(); modal.style.display = "block"; }
-        span.onclick = function() { modal.style.display = "none"; }
-        window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
+        <div class="form-group">
+            <label>Öğrenci Adı Soyadı</label>
+            <input type="text" id="studentName" placeholder="Örn: Can Yılmaz" required>
+        </div>
 
-        // --- CAPTCHA ---
-        let captchaResult = 0;
-        function generateCaptcha() {
-            const n1 = Math.floor(Math.random() * 10) + 1;
-            const n2 = Math.floor(Math.random() * 10) + 1;
-            captchaResult = n1 + n2;
-            document.getElementById('captchaQuestion').textContent = `${n1} + ${n2} = ?`;
+        <div class="form-group">
+            <label>Öğrenci Sınıf Seviyesi (Seneye Okuyacağı)</label>
+            <select id="grade" required>
+                <option value="">Seçiniz</option>
+                <option value="Anaokulu">Anaokulu</option>
+                <option value="1">1. Sınıf</option>
+                <option value="2">2. Sınıf</option>
+                <option value="3">3. Sınıf</option>
+                <option value="4">4. Sınıf</option>
+                <option value="5">5. Sınıf</option>
+                <option value="6">6. Sınıf</option>
+                <option value="7">7. Sınıf</option>
+                <option value="8">8. Sınıf</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Randevu Tarihi</label>
+            <input type="date" id="appointmentDate" required>
+        </div>
+
+        <div class="form-group">
+            <label>Görüşme Odası Seçimi</label>
+            <div class="rooms-grid">
+                <div class="room-card room-full" id="room-oxford" onclick="selectRoom('oxford')">
+                    <h4>Oxford</h4>
+                    <p>Görüşme Odası 1</p>
+                </div>
+                <div class="room-card room-full" id="room-manchester">
+                    <h4>Manchester</h4>
+                    <p>Görüşme Odası 2 (Dolu)</p>
+                </div>
+                <div class="room-card room-full" id="room-liverpool">
+                    <h4>Liverpool</h4>
+                    <p>Görüşme Odası 3 (Dolu)</p>
+                </div>
+                <div class="room-card room-full" id="room-cambridge">
+                    <h4>Cambridge</h4>
+                    <p>Görüşme Odası 4 (Dolu)</p>
+                </div>
+            </div>
+            <input type="hidden" id="selectedRoom" required>
+        </div>
+
+        <div class="form-group">
+            <label>Randevu Saati</label>
+            <select id="appointmentTime" required disabled>
+                <option value="">Önce Tarih Seçiniz</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Güvenlik Doğrulaması</label>
+            <div class="captcha-group">
+                <div class="captcha-display" id="captchaDisplay"></div>
+                <input type="text" id="captchaInput" placeholder="Kodu giriniz" required style="width: 50%;">
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Randevu Oluştur</button>
+        <div id="message"></div>
+    </form>
+</div>
+
+<script>
+    // --- DOLULUK SİMÜLASYONU ---
+    const takenSlots = {
+        '2026-01-06': ['09:30', '14:30'], // Örnek dolu saatler
+        '2026-01-07': ['10:30']
+    };
+
+    let captchaCode = '';
+
+    function generateCaptcha() {
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        captchaCode = '';
+        for (let i = 0; i < 5; i++) {
+            captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
         }
+        document.getElementById('captchaDisplay').innerText = captchaCode;
+    }
+
+    // Sayfa Yüklendiğinde
+    window.onload = function() {
         generateCaptcha();
+        
+        // Tarih seçiciye bugünü min tarih olarak ekle
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('appointmentDate').setAttribute('min', today);
+    };
 
-        let currentBookings = []; 
-        const currentYear = new Date().getFullYear();
-        // Tarih Aralığı: 1 Aralık - 1 Ocak
-        dateInput.setAttribute('min', `${currentYear}-12-01`);
-        dateInput.setAttribute('max', `${currentYear + 1}-01-01`);
+    // --- ODA SEÇİMİ ---
+    function selectRoom(roomName) {
+        const roomEl = document.getElementById('room-' + roomName);
+        if (roomEl.classList.contains('room-full')) return; // Doluysa seçilemez
 
-        phoneInput.addEventListener('input', function (e) {
-            var x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '') + (x[4] ? ' ' + x[4] : '');
+        // Diğer seçimleri kaldır
+        document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+        // Yenisini seç
+        roomEl.classList.add('selected');
+        document.getElementById('selectedRoom').value = roomName;
+    }
+
+    // --- TARİH DEĞİŞİNCE ---
+    document.getElementById('appointmentDate').addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        const dayOfWeek = selectedDate.getDay(); // 0 = Pazar
+        const dateString = this.value;
+
+        // Oda Mantığı: Sadece Oxford açılır (Tarih seçilince)
+        const rOx = document.getElementById('room-oxford');
+        
+        // Önce resetle
+        document.querySelectorAll('.room-card').forEach(c => {
+            c.classList.remove('selected');
+            c.classList.add('room-full'); // Hepsini kapat
         });
+        document.getElementById('selectedRoom').value = '';
 
-        dateInput.addEventListener('change', async function() {
-            if (!this.value) return;
-            
-            // SIFIRLA
-            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-            roomInput.value = '';
-            timeSelect.innerHTML = '<option>Önce Oda Seçiniz</option>';
-            timeSelect.disabled = true;
-
-            // --- ODA MANTIĞI ---
-            const selectedDate = new Date(this.value);
-            const dayOfWeek = selectedDate.getDay(); // 0 = Pazar
-            const dateString = this.value; // YYYY-MM-DD
-
-            // Diğer odalar her zaman 'room-full'
-            const rMan = document.getElementById('room-manchester');
-            const rLiv = document.getElementById('room-liverpool');
-            const rCam = document.getElementById('room-cambridge');
-            const rOx = document.getElementById('room-oxford');
-            
-            rMan.classList.add('room-full');
-            rLiv.classList.add('room-full');
-            rCam.classList.add('room-full');
-            rOx.classList.add('room-full'); // Önce Oxford'u da kapat
-
-            if (dayOfWeek === 0) { 
-                // Pazar Günü
-                if (dateString === '2025-12-28') {
-                    // Sadece 28 Aralık Pazar günü AÇIK
-                    rOx.classList.remove('room-full');
-                } else {
-                    // Diğer Pazarlar KAPALI
-                    rOx.classList.add('room-full');
-                }
-            } else {
-                // Hafta içi ve Cumartesi HER ZAMAN AÇIK
-                rOx.classList.remove('room-full');
-            }
-
-            try {
-                const res = await fetch(`${SCRIPT_URL}?date=${this.value}`);
-                const data = await res.json();
-                if(data.result === 'success') currentBookings = data.bookings;
-            } catch(e) { console.log(e); }
-        });
-
-        function selectRoom(name, el) {
-            if(!dateInput.value) { document.getElementById('roomWarning').style.display='block'; return; }
-            if(el.classList.contains('room-full')) return;
-
-            document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            roomInput.value = name;
-            generateSlots(name, new Date(dateInput.value).getDay() === 0);
+        // Oxford'u Aç
+        if (dayOfWeek !== 0) { // Pazar değilse aç
+            rOx.classList.remove('room-full');
         }
 
-        function generateSlots(room, isSunday) {
-            timeSelect.innerHTML = '';
-            timeSelect.disabled = false;
-            
-            for(let h=9; h<=17; h++) {
-                for(let m=0; m<60; m+=20) {
-                    // Öğle Arası: 12:40 ve 13:00 Kapalı (Her gün)
-                    if(h===12 && m===40) continue;
-                    if(h===13 && m===0) continue;
-                    
-                    if(isSunday) {
-                        // Pazar (Sadece 28 Aralık): 10:30 - 16:30
-                        if(h<10) continue;
-                        if(h===10 && m<30) continue; // 10:40 başla
-                        if(h===16 && m>=20) continue; // 16:00 son (16:20 biter)
-                        if(h>16) continue;
-                    } else {
-                        // Diğer günler: 09:00 - 17:00
-                        if(h===17 && m>0) continue; // 17:00 son
-                    }
+        // Saati Aktif Et
+        const timeSelect = document.getElementById('appointmentTime');
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
 
-                    let time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-                    if(!currentBookings.includes(`${room}-${time}`)) {
-                        let opt = document.createElement('option');
-                        opt.value = time;
-                        opt.innerText = time;
-                        timeSelect.appendChild(opt);
-                    }
+        // --- YENİ SAAT MANTIĞI ---
+        if (dayOfWeek === 0) {
+            // Pazar Günü
+            const opt = document.createElement('option');
+            opt.text = "Pazar günü kurumumuz kapalıdır.";
+            opt.disabled = true;
+            timeSelect.add(opt);
+            timeSelect.disabled = true; // Seçimi tekrar kapat
+        } else {
+            // Hafta İçi ve Cumartesi Sabit Saatler
+            const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
+
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                
+                // Doluluk Kontrolü
+                let isFull = false;
+                if (takenSlots[dateString] && takenSlots[dateString].includes(time)) {
+                    isFull = true;
                 }
-            }
-        }
 
-        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const msg = document.getElementById('statusMessage');
-            
-            if(!roomInput.value) { alert("Lütfen bir oda seçiniz."); return; }
-
-            const captchaVal = parseInt(document.getElementById('captchaInput').value);
-            if(captchaVal !== captchaResult) {
-                msg.innerHTML = '⚠️ Matematik sorusu yanlış!';
-                msg.className = 'error'; msg.style.display = 'block';
-                generateCaptcha(); document.getElementById('captchaInput').value=''; return;
-            }
-
-            const phoneVal = phoneInput.value;
-            if(phoneVal.length < 14) {
-                msg.innerHTML = '⚠️ Lütfen geçerli bir telefon giriniz.';
-                msg.className = 'error'; msg.style.display = 'block'; return;
-            }
-
-            if(!document.getElementById('kvkkCheck').checked) {
-                msg.innerHTML = '⚠️ Lütfen KVKK metnini onaylayınız.';
-                msg.className = 'error'; msg.style.display = 'block'; return;
-            }
-
-            const btn = document.getElementById('submitButton');
-            btn.disabled = true; btn.innerText = 'Gönderiliyor...';
-
-            const formData = new FormData(this);
-            fetch(SCRIPT_URL, {
-                method: 'POST', body: JSON.stringify(Object.fromEntries(formData.entries()))
-            })
-            .then(r => r.json())
-            .then(d => {
-                if(d.result === 'error') {
-                    msg.innerText = '⚠️ ' + d.message; msg.className = 'error';
+                if (isFull) {
+                    option.textContent = `${time} (Dolu)`;
+                    option.disabled = true;
+                    option.style.color = '#ccc';
                 } else {
-                    msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
-                    msg.className = 'success';
-                    this.reset();
-                    // Reset sonrası tekrar kilitle
-                    document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-                    document.getElementById('room-manchester').classList.add('room-full');
-                    document.getElementById('room-liverpool').classList.add('room-full');
-                    document.getElementById('room-cambridge').classList.add('room-full');
-                    document.getElementById('room-oxford').classList.add('room-full');
-                    generateCaptcha();
+                    option.textContent = time;
                 }
-                msg.style.display = 'block';
-            })
-            .catch(() => {
-                msg.innerText = 'Hata oluştu.'; msg.className='error'; msg.style.display='block';
-            })
-            .finally(() => {
-                btn.disabled = false; btn.innerText = 'Randevu Oluştur';
+
+                timeSelect.appendChild(option);
             });
+        }
+    });
+
+    // --- FORM GÖNDERME ---
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userCaptcha = document.getElementById('captchaInput').value.toUpperCase();
+        const room = document.getElementById('selectedRoom').value;
+
+        if (userCaptcha !== captchaCode) {
+            alert('Güvenlik kodu hatalı! Lütfen tekrar deneyiniz.');
+            generateCaptcha();
+            return;
+        }
+
+        if (!room) {
+            alert('Lütfen bir görüşme odası seçiniz (Oxford).');
+            return;
+        }
+
+        const msg = document.getElementById('message');
+        msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
+        msg.className = 'success';
+        
+        // Formu temizle
+        this.reset();
+        
+        // Odayı ve saati tekrar kilitle
+        document.querySelectorAll('.room-card').forEach(c => {
+            c.classList.remove('selected');
+            c.classList.add('room-full');
         });
-    </script>
+        document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
+        document.getElementById('appointmentTime').disabled = true;
+        
+        generateCaptcha();
+    });
+</script>
+
 </body>
 </html>
