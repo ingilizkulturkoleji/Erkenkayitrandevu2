@@ -35,9 +35,8 @@
         text-align: center;
         margin-bottom: 20px;
     }
-    /* Logo Ayarları */
     .logo-area img {
-        max-width: 200px; /* Logo boyutunu buradan ayarlayabilirsin */
+        max-width: 200px; 
         height: auto;
         display: block;
         margin: 0 auto;
@@ -52,7 +51,6 @@
         line-height: 1.2; 
     }
 
-    /* ÖNEMLİ NOT ALANI */
     .note-text {
         text-align: center;
         color: #ef4444;
@@ -113,6 +111,7 @@
         margin-top: 10px;
     }
     button.submit-btn:hover { background-color: #b90324; transform: translateY(-2px); }
+    button.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
     
     .captcha-group { display: flex; gap: 10px; }
     .captcha-display { 
@@ -151,7 +150,7 @@
 
 <div class="container">
     <div class="logo-area">
-        <img src="https://upload.wikimedia.org/wikipedia/tr/b/b3/%C4%B0ngiliz_K%C3%3Clt%C3%BCr_Derne%C4%9Fi_Dil_Okullar%C4%B1_logosu.png" alt="İngiliz Kültür Koleji Logo">
+        <img src="https://i.ibb.co/bgx6xhMQ/ikk-LOGO-PNG.png" alt="İngiliz Kültür Koleji Logo">
     </div>
 
     <h2>Yeni Kayıt Randevusu</h2>
@@ -241,12 +240,92 @@
 </div>
 
 <script>
-    // --- DOLULUK SİMÜLASYONU (TEMİZLENDİ) ---
-    // Artık tüm saatler boş gözükecek
-    const takenSlots = {};
+    // --- GÜNCEL SCRIPT ADRESİN ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
 
+    // --- FORM GÖNDERME İŞLEMİ ---
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Butonu kilitle ve "İşleniyor..." yaz
+        const btn = document.querySelector('.submit-btn');
+        const originalBtnText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "İşleniyor...";
+
+        const userCaptcha = document.getElementById('captchaInput').value.toUpperCase();
+        const room = document.getElementById('selectedRoom').value;
+
+        // Captcha Kontrolü
+        if (userCaptcha !== captchaCode) {
+            alert('Güvenlik kodu hatalı! Lütfen tekrar deneyiniz.');
+            generateCaptcha();
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+            return;
+        }
+
+        // Oda Seçim Kontrolü
+        if (!room) {
+            alert('Lütfen bir görüşme odası seçiniz.');
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+            return;
+        }
+
+        // Gönderilecek Veri Paketi
+        const formData = {
+            veliAdiSoyadi: document.getElementById('parentName').value,
+            telefon: document.getElementById('phone').value,
+            ogrenciAdiSoyadi: document.getElementById('studentName').value,
+            ogrenciSinifi: document.getElementById('grade').value,
+            randevuTarihi: document.getElementById('appointmentDate').value,
+            secilenOda: document.getElementById('selectedRoom').value,
+            randevuSaati: document.getElementById('appointmentTime').value
+        };
+
+        // Google Sheets'e Veri Gönderme
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", // Google Script ile iletişimde standart mod
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            // Başarılı olduğunda
+            const msg = document.getElementById('message');
+            msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
+            msg.className = 'success';
+            
+            // Formu temizle
+            document.getElementById('appointmentForm').reset();
+            
+            // Odayı ve saati tekrar kilitle
+            document.querySelectorAll('.room-card').forEach(c => {
+                c.classList.remove('selected');
+                c.classList.add('room-full');
+            });
+            document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
+            document.getElementById('appointmentTime').disabled = true;
+            
+            generateCaptcha();
+            
+            // Butonu eski haline getir
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            alert("Bir bağlantı hatası oluştu, lütfen internetinizi kontrol edip tekrar deneyin.");
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+        });
+    });
+
+    // --- YARDIMCI FONKSİYONLAR ---
     let captchaCode = '';
-
     function generateCaptcha() {
         const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         captchaCode = '';
@@ -256,128 +335,56 @@
         document.getElementById('captchaDisplay').innerText = captchaCode;
     }
 
-    // Sayfa Yüklendiğinde
     window.onload = function() {
         generateCaptcha();
-        
-        // --- TARİH KISITLAMASI (BUGÜN VE SONRASI) ---
-        // Yerel saati doğru alması için güncellendi
         const date = new Date();
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const todayStr = `${year}-${month}-${day}`;
-        
         document.getElementById('appointmentDate').setAttribute('min', todayStr);
     };
 
-    // --- ODA SEÇİMİ ---
     function selectRoom(roomName) {
         const roomEl = document.getElementById('room-' + roomName);
-        if (roomEl.classList.contains('room-full')) return; // Doluysa seçilemez
-
-        // Diğer seçimleri kaldır
+        if (roomEl.classList.contains('room-full')) return;
         document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-        // Yenisini seç
         roomEl.classList.add('selected');
         document.getElementById('selectedRoom').value = roomName;
     }
 
-    // --- TARİH DEĞİŞİNCE ---
     document.getElementById('appointmentDate').addEventListener('change', function() {
         const selectedDate = new Date(this.value);
-        const dayOfWeek = selectedDate.getDay(); // 0 = Pazar
-        const dateString = this.value;
-
-        // Oda Mantığı: Sadece Oxford açılır (Tarih seçilince)
+        const dayOfWeek = selectedDate.getDay();
         const rOx = document.getElementById('room-oxford');
         
-        // Önce resetle
-        document.querySelectorAll('.room-card').forEach(c => {
-            c.classList.remove('selected');
-            c.classList.add('room-full'); // Hepsini kapat
-        });
-        document.getElementById('selectedRoom').value = '';
-
-        // Oxford'u Aç
-        if (dayOfWeek !== 0) { // Pazar değilse aç
-            rOx.classList.remove('room-full');
-        }
-
-        // Saati Aktif Et
-        const timeSelect = document.getElementById('appointmentTime');
-        timeSelect.disabled = false;
-        timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
-
-        // --- YENİ SAAT MANTIĞI ---
-        if (dayOfWeek === 0) {
-            // Pazar Günü
-            const opt = document.createElement('option');
-            opt.text = "Pazar günü kurumumuz kapalıdır.";
-            opt.disabled = true;
-            timeSelect.add(opt);
-            timeSelect.disabled = true; // Seçimi tekrar kapat
-        } else {
-            // Hafta İçi ve Cumartesi Sabit Saatler
-            const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
-
-            availableHours.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
-                
-                // Doluluk Kontrolü (Artık takenSlots boş olduğu için hepsi boş gelecek)
-                let isFull = false;
-                if (takenSlots[dateString] && takenSlots[dateString].includes(time)) {
-                    isFull = true;
-                }
-
-                if (isFull) {
-                    option.textContent = `${time} (Dolu)`;
-                    option.disabled = true;
-                    option.style.color = '#ccc';
-                } else {
-                    option.textContent = time;
-                }
-
-                timeSelect.appendChild(option);
-            });
-        }
-    });
-
-    // --- FORM GÖNDERME ---
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const userCaptcha = document.getElementById('captchaInput').value.toUpperCase();
-        const room = document.getElementById('selectedRoom').value;
-
-        if (userCaptcha !== captchaCode) {
-            alert('Güvenlik kodu hatalı! Lütfen tekrar deneyiniz.');
-            generateCaptcha();
-            return;
-        }
-
-        if (!room) {
-            alert('Lütfen bir görüşme odası seçiniz (Oxford).');
-            return;
-        }
-
-        const msg = document.getElementById('message');
-        msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
-        msg.className = 'success';
-        
-        // Formu temizle
-        this.reset();
-        
-        // Odayı ve saati tekrar kilitle
         document.querySelectorAll('.room-card').forEach(c => {
             c.classList.remove('selected');
             c.classList.add('room-full');
         });
-        document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
-        document.getElementById('appointmentTime').disabled = true;
-        
-        generateCaptcha();
+        document.getElementById('selectedRoom').value = '';
+
+        if (dayOfWeek !== 0) rOx.classList.remove('room-full');
+
+        const timeSelect = document.getElementById('appointmentTime');
+        timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
+
+        if (dayOfWeek === 0) {
+            const opt = document.createElement('option');
+            opt.text = "Pazar günü kurumumuz kapalıdır.";
+            opt.disabled = true;
+            timeSelect.add(opt);
+            timeSelect.disabled = true;
+        } else {
+            const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
+            availableHours.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                timeSelect.appendChild(option);
+            });
+        }
     });
 </script>
 
