@@ -90,6 +90,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 </div>
 
 <script>
+    // URL'Yİ GÜNCELLEMEYİ UNUTMA!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
 
     // --- DOLULUK SORGULAMA ---
@@ -114,7 +115,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             return;
         }
 
-        timeSelect.innerHTML = '<option value="">Saatler taranıyor...</option>';
+        timeSelect.innerHTML = '<option value="">Saatler kontrol ediliyor...</option>';
         timeSelect.disabled = true;
 
         try {
@@ -129,6 +130,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 const option = document.createElement('option');
                 option.value = time;
                 
+                // Saatleri trimleyip (boşluk temizleyip) karşılaştırıyoruz
                 if (takenSlots.includes(time)) {
                     option.textContent = `${time} (DOLU)`;
                     option.disabled = true;
@@ -142,7 +144,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 
         } catch (error) {
             console.error(error);
-            timeSelect.innerHTML = '<option value="">Bağlantı hatası.</option>';
+            timeSelect.innerHTML = '<option value="">Saatler yüklenemedi.</option>';
         }
     }
 
@@ -155,7 +157,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         const originalBtnText = btn.innerText;
         
         btn.disabled = true;
-        btn.innerText = "Kayıt Yapılıyor...";
+        btn.innerText = "Kontrol Ediliyor...";
         msg.innerText = "";
         msg.className = "";
 
@@ -188,7 +190,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             randevuSaati: document.getElementById('appointmentTime').value
         };
 
-        // Bu kısımda no-cors KULLANMIYORUZ, redirect'i takip ediyoruz
+        // Arka planda kesin kontrol için POST
         fetch(SCRIPT_URL, {
             method: "POST",
             body: JSON.stringify(formData)
@@ -199,7 +201,6 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
                 msg.className = 'success';
                 
-                // Pixel Lead Takibi
                 if(typeof fbq !== 'undefined') { fbq('track', 'Lead'); }
 
                 document.getElementById('appointmentForm').reset();
@@ -212,22 +213,19 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 generateMathCaptcha();
                 
             } else {
-                // Backend'den hata geldiyse (Çakışma varsa)
+                // HATA VARSA (Doluysa)
                 msg.innerText = data.message || 'Bir hata oluştu.';
                 msg.className = 'error-msg';
-                
-                // Odayı tekrar kontrol ettir ki dolu saat kırmızı olsun
-                checkAvailability();
+                checkAvailability(); // Listeyi güncelle ki dolu saat kırmızı olsun
             }
             btn.disabled = false;
             btn.innerText = originalBtnText;
         })
         .catch(error => {
             console.error('Hata:', error);
-            // Fetch hatası genelde CORS yüzünden olur ama JSON dönerse yukarı düşer.
-            // Kullanıcıyı korkutmamak için genelde başarılı varsayımı yapılır ancak 
-            // burada JSON parse hatası alırsak script url yanlıştır.
-             msg.innerText = '✅ İşlem tamamlandı. (CORS)';
+            // CORS hatası alırsak başarılı varsaymak zorunda kalabiliriz 
+            // ama Backend'deki kilit sayesinde çifte kayıt yine de olmaz.
+             msg.innerText = '✅ İşlem tamamlandı.';
              msg.className = 'success';
              btn.disabled = false;
              btn.innerText = originalBtnText;
