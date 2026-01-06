@@ -2,127 +2,182 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Randevu Al</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İngiliz Kültür Koleji - Erken Kayıt</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-.time {
-  padding:8px;
-  margin:6px;
-  border:1px solid #ccc;
-  display:inline-block;
+:root { --primary:#d90429; --secondary:#2b2d42; --bg:#edf2f4; }
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.container{
+  background:#fff;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+  max-width:500px;
+  width:100%;
+}
+.logo-area{text-align:center;margin-bottom:20px;}
+.logo-area img{max-width:200px}
+h2{text-align:center;color:var(--secondary);font-weight:800}
+.note-text{
+  background:#fef2f2;
+  border:1px solid #fee2e2;
+  color:#ef4444;
+  padding:10px;
+  border-radius:8px;
+  text-align:center;
+  margin-bottom:25px;
+  font-size:.9rem;
+}
+.form-group{margin-bottom:18px}
+label{font-weight:600;font-size:.9rem;color:var(--secondary)}
+input,select{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:2px solid #e2e8f0;
+  font-family:'Outfit'
+}
+select option:disabled{color:#d90429}
+button{
+  width:100%;
+  padding:16px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-weight:800;
   cursor:pointer;
 }
-.disabled {
-  background:#e0e0e0;
-  cursor:not-allowed;
+button:disabled{background:#ccc}
+.success,.error-msg{
+  margin-top:15px;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:600;
 }
-.active {
-  background:#2e7d32;
-  color:#fff;
-}
+.success{background:#d1fae5;color:#065f46}
+.error-msg{background:#fee2e2;color:#ef4444}
 </style>
 </head>
 
 <body>
 
-<h3>Randevu Al</h3>
+<div class="container">
+  <div class="logo-area">
+    <img src="https://i.ibb.co/bgx6xhMQ/ikk-LOGO-PNG.png">
+  </div>
 
-<input id="veli" placeholder="Veli Adı Soyadı"><br><br>
-<input id="ogrenci" placeholder="Öğrenci Adı Soyadı"><br><br>
-<input id="sinif" placeholder="Öğrenci Sınıfı"><br><br>
-<input id="tel" placeholder="5XXXXXXXXX"><br><br>
+  <h2>Erken Kayıt Randevusu</h2>
+  <div class="note-text">
+    ⚠️ Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.
+  </div>
 
-<input type="date" id="date"><br><br>
+  <form id="form">
+    <div class="form-group">
+      <label>Veli Adı Soyadı</label>
+      <input id="veli" required>
+    </div>
 
-<select id="room">
-  <option value="Oxford">Oxford</option>
-</select>
+    <div class="form-group">
+      <label>Telefon</label>
+      <input id="tel" placeholder="5XXXXXXXXX" required>
+    </div>
 
-<h4>Saat Seçiniz</h4>
-<div id="times"></div>
+    <div class="form-group">
+      <label>Öğrenci Adı Soyadı</label>
+      <input id="ogrenci" required>
+    </div>
 
-<br>
-<button onclick="submitForm()">Randevu Al</button>
+    <div class="form-group">
+      <label>Öğrenci Sınıfı</label>
+      <input id="sinif" required>
+    </div>
+
+    <div class="form-group">
+      <label>Randevu Tarihi</label>
+      <input type="date" id="date" required>
+    </div>
+
+    <div class="form-group">
+      <label>Randevu Saati</label>
+      <select id="time" disabled required></select>
+    </div>
+
+    <button type="submit">Randevu Oluştur</button>
+    <div id="msg"></div>
+  </form>
+</div>
 
 <script>
-const WEBAPP_URL = "WEB_APP_URLİNİ_BURAYA_YAPIŞTIR";
+const SCRIPT_URL = "WEB_APP_URLİNİ_BURAYA_YAPIŞTIR";
+const HOURS = ["09:30","10:30","11:30","13:30","14:30","15:30","16:30"];
 
-const TIMES = [
- "09:00","09:30","10:00","10:30",
- "11:00","11:30","13:00","13:30",
- "14:00","14:30","15:00","15:30"
-];
+date.addEventListener("change", loadTimes);
 
-let selectedTime = "";
-
-document.getElementById("date").addEventListener("change", loadTimes);
-
-function loadTimes() {
+function loadTimes(){
   const d = new Date(date.value);
-
-  // ❌ Pazar kapalı
-  if (d.getDay() === 0) {
-    alert("Pazar günü kapalıyız.");
-    date.value = "";
+  if(d.getDay()===0){
+    alert("Pazar günü kapalıyız");
+    date.value="";
     return;
   }
 
-  times.innerHTML = "";
-  selectedTime = "";
+  time.innerHTML="<option>Saat Seçiniz</option>";
+  time.disabled=true;
 
-  fetch(`${WEBAPP_URL}?date=${date.value}&room=Oxford`)
-    .then(r => r.json())
-    .then(data => {
-      TIMES.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "time";
-        div.innerText = t;
-
-        if (data.taken.includes(t)) {
-          div.classList.add("disabled");
-        } else {
-          div.onclick = () => selectTime(div, t);
+  fetch(`${SCRIPT_URL}?date=${date.value}&room=Oxford`)
+    .then(r=>r.json())
+    .then(data=>{
+      HOURS.forEach(h=>{
+        const o=document.createElement("option");
+        o.value=h;
+        if(data.taken.includes(h)){
+          o.textContent=h+" (DOLU)";
+          o.disabled=true;
+        }else{
+          o.textContent=h;
         }
-
-        times.appendChild(div);
+        time.appendChild(o);
       });
+      time.disabled=false;
     });
 }
 
-function selectTime(el, time) {
-  document.querySelectorAll(".time").forEach(x => x.classList.remove("active"));
-  el.classList.add("active");
-  selectedTime = time;
-}
+form.addEventListener("submit",e=>{
+  e.preventDefault();
 
-function submitForm() {
-  if (!selectedTime) {
-    alert("Lütfen saat seçiniz");
-    return;
-  }
-
-  fetch(WEBAPP_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      veliAdiSoyadi: veli.value,
-      ogrenciAdiSoyadi: ogrenci.value,
-      ogrenciSinifi: sinif.value,
-      telefon: tel.value,
-      randevuTarihi: date.value,
-      randevuSaati: selectedTime,
-      secilenOda: "Oxford"
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      veliAdiSoyadi:veli.value,
+      ogrenciAdiSoyadi:ogrenci.value,
+      ogrenciSinifi:sinif.value,
+      telefon:tel.value,
+      randevuTarihi:date.value,
+      randevuSaati:time.value,
+      secilenOda:"Oxford"
     })
   })
-  .then(r => r.json())
-  .then(res => {
-    if (res.result === "success") {
-      alert("Randevu başarıyla alındı");
-      location.reload();
-    } else {
-      alert(res.message);
-    }
+  .then(r=>r.json())
+  .then(res=>{
+    msg.className=res.result==="success"?"success":"error-msg";
+    msg.innerText=res.result==="success"
+      ?"Randevunuz oluşturuldu."
+      :res.message;
+    if(res.result==="success") form.reset();
   });
-}
+});
 </script>
 
 </body>
