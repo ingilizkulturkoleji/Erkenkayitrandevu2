@@ -40,8 +40,8 @@
             --gradient-end: #283593;
             --text-light: #ffffff;
             --text-gray: #e3f2fd;
-            --text-dark: #1a237e; /* KOYU MAVİ METİN RENGİ */
-            --input-bg: #ffffff; /* BEYAZ ARKA PLAN */
+            --text-dark: #1a237e;
+            --input-bg: #ffffff;
             --shadow-dark: rgba(0, 0, 0, 0.3);
             --shadow-light: rgba(255, 255, 255, 0.1);
             --success-green: #4caf50;
@@ -165,7 +165,6 @@
             opacity: 0.9;
         }
         
-        /* TÜM INPUT ve SELECT ALANLARI - OKUNABİLİR */
         .form-input, .form-select, #captchaInput, input[type="date"], input[type="tel"], input[type="text"], select {
             width: 100%;
             padding: 14px;
@@ -183,7 +182,6 @@
             appearance: none;
         }
         
-        /* SELECT ÖZEL STİL */
         .form-select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a237e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;
             background-repeat: no-repeat !important;
@@ -192,7 +190,6 @@
             padding-right: 40px !important;
         }
         
-        /* DROPDOWN LİSTESİNDEKİ SEÇENEKLER */
         .form-select option, select option {
             color: var(--text-dark) !important;
             background-color: white !important;
@@ -201,19 +198,11 @@
             font-weight: 500 !important;
         }
         
-        /* SCROLL BAR İÇİNDEKİ SEÇENEKLER */
-        .form-select optgroup, select optgroup {
-            color: var(--text-dark) !important;
-            background-color: white !important;
-        }
-        
-        /* PLACEHOLDER RENGİ */
         .form-input::placeholder, #captchaInput::placeholder {
             color: rgba(26, 35, 126, 0.6) !important;
             opacity: 1;
         }
         
-        /* FOCUS DURUMU */
         .form-input:focus, .form-select:focus, #captchaInput:focus, input[type="date"]:focus {
             outline: none;
             border-color: var(--light-blue);
@@ -221,12 +210,10 @@
             box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.3);
         }
         
-        /* DATE INPUT */
         input[type="date"] {
             color: var(--text-dark);
         }
         
-        /* DATE INPUT İKONU */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(0.3);
             cursor: pointer;
@@ -430,8 +417,9 @@
             background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
         }
         
+        /* ANAOKULU LOGOSU İÇİN - AYNI LOGO */
         .social-icon.anaokulu {
-            background: linear-gradient(135deg, #FFD700, #FF8C00, #FF4500);
+            background: linear-gradient(135deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
         }
         
         .social-label {
@@ -483,25 +471,6 @@
                 flex-direction: row;
                 justify-content: flex-start;
             }
-        }
-        
-        /* ÖZEL SCROLLBAR */
-        .form-select::-webkit-scrollbar, select::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .form-select::-webkit-scrollbar-track, select::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-        
-        .form-select::-webkit-scrollbar-thumb, select::-webkit-scrollbar-thumb {
-            background: var(--light-blue);
-            border-radius: 4px;
-        }
-        
-        .form-select::-webkit-scrollbar-thumb:hover, select::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-blue);
         }
     </style>
 </head>
@@ -634,7 +603,7 @@
                 </a>
                 <a href="https://www.instagram.com/ingilizkulturkolejianaokulu/" target="_blank" class="social-link">
                     <div class="social-icon anaokulu">
-                        <i class="fas fa-child"></i>
+                        <i class="fab fa-instagram"></i> <!-- AYNI LOGO -->
                     </div>
                     <div class="social-label">Anaokulu</div>
                 </a>
@@ -648,10 +617,10 @@
     </div>
     
     <script>
-        // YENİ APPSCRIPT URL'NİZ
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUdZblm9yJSEUlwUTU4m5ocguwad6imhqSsDWSU4U7fsMU25kkT3QvexjEzrCvsH8H/exec"; 
+        // APPSCRIPT URL'Sİ - BURAYI KENDİ URL'İNİZLE DEĞİŞTİRİN
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUdZblm9yJSEUlwUTU4m5ocguwad6imhqSsDWSU4U7fsMU25kkT3QvexjEzrCvsH8H/exec";
         
-        // --- DOLULUK SORGULAMA ---
+        // --- DOLULUK SORGULAMA (ÇALIŞAN VERSİYON) ---
         async function checkAvailability() {
             const dateInput = document.getElementById('appointmentDate');
             const roomInput = document.getElementById('selectedRoom');
@@ -678,12 +647,11 @@
                 return;
             }
             
-            timeSelect.innerHTML = '<option value="">Saatler kontrol ediliyor...</option>';
+            timeSelect.innerHTML = '<option value="">Saatler yükleniyor...</option>';
             timeSelect.disabled = true;
             submitBtn.disabled = true;
             
             try {
-                console.log("Doluluk sorgulanıyor:", dateVal, roomVal);
                 const response = await fetch(`${SCRIPT_URL}?date=${dateVal}&room=${roomVal}`);
                 
                 if (!response.ok) {
@@ -691,7 +659,6 @@
                 }
                 
                 const data = await response.json();
-                console.log("Doluluk verisi:", data);
                 
                 if (!data.success) {
                     timeSelect.innerHTML = `<option value="">Hata: ${data.message || 'Sunucu hatası'}</option>`;
@@ -701,35 +668,32 @@
                 const takenSlots = data.taken || [];
                 const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
                 
-                timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
+                let optionsHtml = '<option value="">Saat Seçiniz</option>';
                 
                 availableHours.forEach(time => {
-                    const option = document.createElement('option');
-                    option.value = time;
-                    
-                    // Saat formatını standartlaştır
-                    const timeFormatted = time.includes(':') ? time : time.replace(/(\d{2})(\d{2})/, '$1:$2');
+                    // Saati standart formata getir
+                    const timeFormatted = time.includes(':') ? time : 
+                                        time.replace(/(\d{2})(\d{2})/, '$1:$2');
                     
                     // Dolu saatleri kontrol et
                     const isTaken = takenSlots.some(takenTime => {
-                        const takenFormatted = takenTime.includes(':') ? takenTime : takenTime.replace(/(\d{2})(\d{2})/, '$1:$2');
+                        const takenFormatted = takenTime.includes(':') ? takenTime : 
+                                              takenTime.replace(/(\d{2})(\d{2})/, '$1:$2');
                         return takenFormatted === timeFormatted;
                     });
                     
                     if (isTaken) {
-                        option.textContent = `${time} (DOLU)`;
-                        option.disabled = true;
-                        option.style.color = '#f44336';
-                        option.style.fontWeight = '600';
+                        optionsHtml += `<option value="${timeFormatted}" disabled style="color:#f44336;font-weight:600;">
+                                         ${timeFormatted} (DOLU)
+                                       </option>`;
                     } else {
-                        option.textContent = time;
+                        optionsHtml += `<option value="${timeFormatted}">${timeFormatted}</option>`;
                     }
-                    timeSelect.appendChild(option);
                 });
                 
+                timeSelect.innerHTML = optionsHtml;
                 timeSelect.disabled = false;
                 submitBtn.disabled = timeSelect.value === "";
-                console.log("Doluluk güncellendi. Dolu saat sayısı:", takenSlots.length);
                 
             } catch (error) {
                 console.error("Doluluk sorgulama hatası:", error);
@@ -803,8 +767,6 @@
                 return;
             }
             
-            console.log("Gönderilecek veri:", formData);
-            
             try {
                 const response = await fetch(SCRIPT_URL, {
                     method: "POST",
@@ -814,16 +776,7 @@
                     body: JSON.stringify(formData)
                 });
                 
-                console.log("Response status:", response.status);
-                
-                let data;
-                try {
-                    data = await response.json();
-                    console.log("Gelen veri:", data);
-                } catch (parseError) {
-                    console.error("JSON parse hatası:", parseError);
-                    throw new Error('Sunucu yanıtı geçersiz. Lütfen tekrar deneyin.');
-                }
+                let data = await response.json();
                 
                 if (data.result === 'success') {
                     // BAŞARILI
@@ -834,7 +787,7 @@
                         fbq('track', 'Lead'); 
                     }
                     
-                    // Formu tamamen sıfırla
+                    // Formu sıfırla
                     document.getElementById('appointmentForm').reset();
                     
                     // Oda kartlarını sıfırla
@@ -859,7 +812,7 @@
                     setMinDate();
                     
                 } else {
-                    // HATA - Aynı saatte randevu var
+                    // HATA
                     showMessage('❌ ' + data.message, 'error');
                     
                     // Hemen doluluk durumunu güncelle
