@@ -58,7 +58,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         <img src="https://i.ibb.co/bgx6xhMQ/ikk-LOGO-PNG.png" alt="İngiliz Kültür Koleji Logo">
     </div>
     <h2>Erken Kayıt Randevusu</h2>
-    <div class="note-text">?? Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.</div>
+    <div class="note-text"> Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.</div>
 
     <form id="appointmentForm">
         <div class="form-group"><label>Veli Adı Soyadı</label><input type="text" id="parentName" placeholder="Örn: Ahmet Yılmaz" required></div>
@@ -198,7 +198,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         .then(response => response.json())
         .then(data => {
             if (data.result === 'success') {
-                msg.innerText = '? Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
+                msg.innerText = 'Randevunuz başarıyla oluşturuldu!';
                 msg.className = 'success';
                 
                 if(typeof fbq !== 'undefined') { fbq('track', 'Lead'); }
