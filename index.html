@@ -48,6 +48,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
     .captcha-display { background: #e2e8f0; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--secondary); user-select: none; }
     .success { background-color: #d1fae5; color: #065f46; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; font-weight: 600; }
     .error-msg { background-color: #fee2e2; color: #ef4444; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; font-weight: 600; }
+    .time-option-disabled { color: #ef4444 !important; font-weight: 600; }
     @media (max-width: 480px) { .container { padding: 25px; } h2 { font-size: 1.5rem; } }
 </style>
 </head>
@@ -90,8 +91,8 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 </div>
 
 <script>
-    // URL'Yİ GÜNCELLEMEYİ UNUTMA!
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-hrr02ZD2Eq0c1lIJsco1JnttuBoBs_A1L5_DL91SSFAerLQaTh_MxMfxeKdtxWIH/exec"; 
+    // YENİ APPSCRIPT URL'NİZ
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwXb8jA6DrfjFMFoWv_OGa5W-SiEL75coqYxpQQnT-rza7ZixS1Jl-aMRYSYjxvkGm/exec"; 
 
     // --- DOLULUK SORGULAMA ---
     async function checkAvailability() {
@@ -119,8 +120,21 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         timeSelect.disabled = true;
 
         try {
+            console.log("Doluluk sorgulanıyor:", dateVal, roomVal);
             const response = await fetch(`${SCRIPT_URL}?date=${dateVal}&room=${roomVal}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP hatası! Durum: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log("Doluluk verisi:", data);
+            
+            if (data.error) {
+                timeSelect.innerHTML = `<option value="">Hata: ${data.message || data.error}</option>`;
+                return;
+            }
+            
             const takenSlots = data.taken || [];
 
             const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
@@ -131,25 +145,39 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 option.value = time;
                 
                 // Saatleri trimleyip (boşluk temizleyip) karşılaştırıyoruz
-                if (takenSlots.includes(time)) {
-                    option.textContent = `${time} (DOLU)`;
+                // Ayrıca zaman formatını standartlaştır (09:30)
+                const timeFormatted = time.includes(':') ? time : 
+                                    time.replace(/(\d{2})(\d{2})/, '$1:$2');
+                
+                // Dolu saatleri kontrol et
+                const isTaken = takenSlots.some(takenTime => {
+                    const takenFormatted = takenTime.includes(':') ? takenTime : 
+                                         takenTime.replace(/(\d{2})(\d{2})/, '$1:$2');
+                    return takenFormatted === timeFormatted;
+                });
+                
+                if (isTaken) {
+                    option.textContent = `${timeFormatted} (DOLU)`;
                     option.disabled = true;
-                    option.style.color = '#d90429';
+                    option.classList.add('time-option-disabled');
                 } else {
-                    option.textContent = time;
+                    option.textContent = timeFormatted;
                 }
                 timeSelect.appendChild(option);
             });
+            
             timeSelect.disabled = false;
+            console.log("Doluluk güncellendi. Dolu saat sayısı:", takenSlots.length);
 
         } catch (error) {
-            console.error(error);
-            timeSelect.innerHTML = '<option value="">Saatler yüklenemedi.</option>';
+            console.error("Doluluk sorgulama hatası:", error);
+            timeSelect.innerHTML = '<option value="">Saatler yüklenemedi. Lütfen tekrar deneyin.</option>';
+            timeSelect.disabled = false;
         }
     }
 
     // --- KAYIT OLUŞTURMA ---
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+    document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const btn = document.querySelector('.submit-btn');
@@ -161,9 +189,12 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         msg.innerText = "";
         msg.className = "";
 
+        // Form verilerini al
         const userCaptcha = parseInt(document.getElementById('captchaInput').value);
         const room = document.getElementById('selectedRoom').value;
+        const appointmentTime = document.getElementById('appointmentTime').value;
 
+        // CAPTCHA kontrolü
         if (userCaptcha !== mathResult) {
             alert('Matematik işleminin sonucu yanlış! Lütfen tekrar deneyiniz.');
             generateMathCaptcha();
@@ -173,6 +204,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             return;
         }
 
+        // Oda seçimi kontrolü
         if (!room) {
             alert('Lütfen bir görüşme odası seçiniz.');
             btn.disabled = false;
@@ -180,58 +212,116 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             return;
         }
 
+        // Saat seçimi kontrolü
+        if (!appointmentTime) {
+            alert('Lütfen bir randevu saati seçiniz.');
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+            return;
+        }
+
+        // Form verilerini hazırla
         const formData = {
-            veliAdiSoyadi: document.getElementById('parentName').value,
-            telefon: document.getElementById('phone').value,
-            ogrenciAdiSoyadi: document.getElementById('studentName').value,
+            veliAdiSoyadi: document.getElementById('parentName').value.trim(),
+            telefon: document.getElementById('phone').value.trim(),
+            ogrenciAdiSoyadi: document.getElementById('studentName').value.trim(),
             ogrenciSinifi: document.getElementById('grade').value,
             randevuTarihi: document.getElementById('appointmentDate').value,
-            secilenOda: document.getElementById('selectedRoom').value,
-            randevuSaati: document.getElementById('appointmentTime').value
+            secilenOda: room,
+            randevuSaati: appointmentTime
         };
 
-        // Arka planda kesin kontrol için POST
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
+        // Tüm alanların dolu olduğunu kontrol et
+        if (!formData.veliAdiSoyadi || !formData.telefon || !formData.ogrenciAdiSoyadi || 
+            !formData.ogrenciSinifi || !formData.randevuTarihi || !formData.randevuSaati) {
+            alert('Lütfen tüm alanları doldurunuz.');
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+            return;
+        }
+
+        console.log("Gönderilecek veri:", formData);
+
+        try {
+            // ÖNEMLİ: Content-Type header'ını ekle
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            console.log("Response status:", response.status);
+            
+            let data;
+            try {
+                data = await response.json();
+                console.log("Gelen veri:", data);
+            } catch (parseError) {
+                console.error("JSON parse hatası:", parseError);
+                throw new Error('Sunucu yanıtı geçersiz. Lütfen tekrar deneyin.');
+            }
+
             if (data.result === 'success') {
+                // BAŞARILI
                 msg.innerText = '✅ Randevunuz başarıyla oluşturuldu! Sizi arayacağız.';
                 msg.className = 'success';
                 
-                if(typeof fbq !== 'undefined') { fbq('track', 'Lead'); }
+                // Facebook Pixel için lead olayı
+                if(typeof fbq !== 'undefined') { 
+                    fbq('track', 'Lead'); 
+                }
 
+                // Formu tamamen sıfırla
                 document.getElementById('appointmentForm').reset();
+                
+                // Oda kartlarını sıfırla
                 document.querySelectorAll('.room-card').forEach(c => {
                     c.classList.remove('selected');
                     c.classList.add('room-full');
                 });
+                
+                // Saat seçimini sıfırla
                 document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
                 document.getElementById('appointmentTime').disabled = true;
+                document.getElementById('selectedRoom').value = '';
+                
+                // Yeni CAPTCHA oluştur
                 generateMathCaptcha();
                 
+                // Tarih sınırlamasını tekrar uygula
+                const date = new Date();
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const todayStr = `${year}-${month}-${day}`;
+                document.getElementById('appointmentDate').setAttribute('min', todayStr);
+                
             } else {
-                // HATA VARSA (Doluysa)
-                msg.innerText = data.message || 'Bir hata oluştu.';
+                // HATA - Aynı saatte randevu var
+                const errorMessage = data.message || 'Bu saat zaten dolu. Lütfen başka bir saat seçin.';
+                msg.innerText = '❌ ' + errorMessage;
                 msg.className = 'error-msg';
-                checkAvailability(); // Listeyi güncelle ki dolu saat kırmızı olsun
+                
+                // Hemen doluluk durumunu güncelle (dolu saatleri kırmızı yap)
+                await checkAvailability();
+                
+                // Kullanıcıya hızlı geri bildirim
+                alert(errorMessage);
             }
+            
+        } catch (error) {
+            console.error('Fetch hatası:', error);
+            msg.innerText = '❌ Bağlantı hatası oluştu. Lütfen tekrar deneyin veya bizi arayın.';
+            msg.className = 'error-msg';
+        } finally {
             btn.disabled = false;
             btn.innerText = originalBtnText;
-        })
-        .catch(error => {
-            console.error('Hata:', error);
-            // CORS hatası alırsak başarılı varsaymak zorunda kalabiliriz 
-            // ama Backend'deki kilit sayesinde çifte kayıt yine de olmaz.
-             msg.innerText = '✅ İşlem tamamlandı.';
-             msg.className = 'success';
-             btn.disabled = false;
-             btn.innerText = originalBtnText;
-        });
+        }
     });
 
+    // --- CAPTCHA SİSTEMİ ---
     let mathResult = 0;
     function generateMathCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1; 
@@ -240,6 +330,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         document.getElementById('captchaDisplay').innerText = `${num1} + ${num2} = ?`;
     }
 
+    // --- SAYFA YÜKLENDİĞİNDE ---
     window.onload = function() {
         generateMathCaptcha();
         const date = new Date();
@@ -248,27 +339,66 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         const day = String(date.getDate()).padStart(2, '0');
         const todayStr = `${year}-${month}-${day}`;
         document.getElementById('appointmentDate').setAttribute('min', todayStr);
+        document.getElementById('appointmentDate').setAttribute('max', `${year+1}-${month}-${day}`);
     };
 
+    // --- ODA SEÇİMİ ---
     function selectRoom(roomName) {
         const roomEl = document.getElementById('room-' + roomName);
         if (roomEl.classList.contains('room-full')) return;
+        
+        // Tüm seçimleri kaldır
         document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+        
+        // Yeni seçimi yap
         roomEl.classList.add('selected');
         document.getElementById('selectedRoom').value = roomName;
+        
+        // Doluluk kontrolü yap
         checkAvailability();
     }
 
+    // --- TARİH DEĞİŞTİĞİNDE ---
     document.getElementById('appointmentDate').addEventListener('change', function() {
         const selectedDate = new Date(this.value);
         const dayOfWeek = selectedDate.getDay();
-        const rOx = document.getElementById('room-oxford');
-        document.querySelectorAll('.room-card').forEach(c => { c.classList.remove('selected'); c.classList.add('room-full'); });
+        
+        // Oxford hariç tüm odaları dolu göster
+        document.querySelectorAll('.room-card').forEach(c => { 
+            c.classList.remove('selected'); 
+            c.classList.add('room-full'); 
+        });
+        
+        // Gizli oda inputunu sıfırla
         document.getElementById('selectedRoom').value = '';
-        if (dayOfWeek !== 0) rOx.classList.remove('room-full');
+        
+        // Pazar kontrolü
+        if (dayOfWeek === 0) {
+            document.getElementById('appointmentTime').innerHTML = '<option value="">Pazar günü kurumumuz kapalıdır.</option>';
+            document.getElementById('appointmentTime').disabled = true;
+            return;
+        }
+        
+        // Oxford'u aktif et (sadece pazar değilse)
+        const rOx = document.getElementById('room-oxford');
+        rOx.classList.remove('room-full');
+        
+        // Saat seçimini sıfırla
         const timeSelect = document.getElementById('appointmentTime');
         timeSelect.innerHTML = '<option value="">Önce Oda Seçiniz</option>';
         timeSelect.disabled = true;
+    });
+
+    // --- SAYFAYI KAPATIRKEN UYARI (Opsiyonel) ---
+    window.addEventListener('beforeunload', function (e) {
+        const formFilled = document.getElementById('parentName').value || 
+                          document.getElementById('phone').value ||
+                          document.getElementById('studentName').value;
+        
+        if (formFilled) {
+            e.preventDefault();
+            e.returnValue = 'Form doldurulmuş. Sayfadan ayrılmak istediğinize emin misiniz?';
+        }
     });
 </script>
 </body>
