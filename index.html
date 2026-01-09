@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>İngiliz Kültür Koleji - Erken Kayıt</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
 !function(f,b,e,v,n,t,s)
@@ -22,33 +23,343 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 /></noscript>
 <style>
-    :root { --primary: #d90429; --secondary: #2b2d42; --bg: #edf2f4; }
-    body { font-family: 'Outfit', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; position: relative; overflow: hidden; }
-    .logo-area { text-align: center; margin-bottom: 20px; }
-    .logo-area img { max-width: 200px; height: auto; display: block; margin: 0 auto; }
-    h2 { text-align: center; color: var(--secondary); margin-bottom: 10px; font-weight: 800; font-size: 1.8rem; line-height: 1.2; }
-    .note-text { text-align: center; color: #ef4444; font-size: 0.95rem; font-weight: 600; margin-top: 0; margin-bottom: 30px; background-color: #fef2f2; padding: 10px; border-radius: 8px; border: 1px solid #fee2e2; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--secondary); font-size: 0.9rem; }
-    input, select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.3s; font-family: 'Outfit', sans-serif; }
-    input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.1); }
-    .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-    .room-card { border: 2px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; background: white; }
-    .room-card h4 { margin: 0 0 5px; font-size: 1rem; color: var(--secondary); }
-    .room-card p { margin: 0; font-size: 0.8rem; color: #64748b; }
-    .room-card:hover { border-color: var(--primary); color: var(--primary); }
-    .room-card.selected { border-color: var(--secondary); background-color: var(--secondary); color: white; }
-    .room-card.selected h4, .room-card.selected p { color: white; }
-    .room-full { background-color: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; pointer-events: none; opacity: 0.7; }
-    button.submit-btn { width: 100%; padding: 16px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-    button.submit-btn:hover { background-color: #b90324; transform: translateY(-2px); }
-    button.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
-    .captcha-group { display: flex; gap: 10px; }
-    .captcha-display { background: #e2e8f0; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--secondary); user-select: none; }
-    .success { background-color: #d1fae5; color: #065f46; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; font-weight: 600; }
-    .error-msg { background-color: #fee2e2; color: #ef4444; padding: 15px; border-radius: 10px; text-align: center; margin-top: 20px; font-weight: 600; }
-    @media (max-width: 480px) { .container { padding: 25px; } h2 { font-size: 1.5rem; } }
+    :root { 
+        --primary: #1a237e; 
+        --primary-dark: #0d1458;
+        --secondary: #283593; 
+        --accent: #3949ab;
+        --bg: #f5f7ff; 
+        --light: #ffffff;
+        --danger: #d90429;
+    }
+    
+    body { 
+        font-family: 'Outfit', sans-serif; 
+        background: linear-gradient(135deg, #0d1458 0%, #1a237e 50%, #283593 100%);
+        margin: 0; 
+        padding: 20px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+    }
+    
+    .container { 
+        background: white; 
+        padding: 40px; 
+        border-radius: 20px; 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+        width: 100%; 
+        max-width: 500px; 
+        position: relative; 
+        overflow: hidden; 
+    }
+    
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+    }
+    
+    .logo-area { 
+        text-align: center; 
+        margin-bottom: 20px; 
+        position: relative;
+    }
+    
+    .logo-area img { 
+        max-width: 200px; 
+        height: auto; 
+        display: block; 
+        margin: 0 auto 15px; 
+    }
+    
+    .phone-button {
+        display: inline-block;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(26, 35, 126, 0.3);
+        transition: all 0.3s;
+        margin-bottom: 10px;
+    }
+    
+    .phone-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(26, 35, 126, 0.4);
+    }
+    
+    .phone-button i {
+        font-size: 1.1rem;
+    }
+    
+    h2 { 
+        text-align: center; 
+        color: var(--primary); 
+        margin-bottom: 10px; 
+        font-weight: 800; 
+        font-size: 1.8rem; 
+        line-height: 1.2; 
+    }
+    
+    .note-text { 
+        text-align: center; 
+        color: var(--danger); 
+        font-size: 0.95rem; 
+        font-weight: 600; 
+        margin-top: 0; 
+        margin-bottom: 30px; 
+        background-color: #fef2f2; 
+        padding: 12px; 
+        border-radius: 8px; 
+        border: 1px solid #fee2e2; 
+    }
+    
+    .form-group { 
+        margin-bottom: 20px; 
+    }
+    
+    label { 
+        display: block; 
+        margin-bottom: 8px; 
+        font-weight: 600; 
+        color: var(--primary); 
+        font-size: 0.9rem; 
+    }
+    
+    input, select { 
+        width: 100%; 
+        padding: 14px; 
+        border: 2px solid #e2e8f0; 
+        border-radius: 10px; 
+        font-size: 16px; 
+        box-sizing: border-box; 
+        transition: 0.3s; 
+        font-family: 'Outfit', sans-serif; 
+    }
+    
+    input:focus, select:focus { 
+        border-color: var(--accent); 
+        outline: none; 
+        box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.1); 
+    }
+    
+    .rooms-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px; 
+        margin-bottom: 20px; 
+    }
+    
+    .room-card { 
+        border: 2px solid #e2e8f0; 
+        border-radius: 12px; 
+        padding: 15px; 
+        text-align: center; 
+        cursor: pointer; 
+        transition: 0.3s; 
+        background: white; 
+    }
+    
+    .room-card h4 { 
+        margin: 0 0 5px; 
+        font-size: 1rem; 
+        color: var(--primary); 
+    }
+    
+    .room-card p { 
+        margin: 0; 
+        font-size: 0.8rem; 
+        color: #64748b; 
+    }
+    
+    .room-card:hover { 
+        border-color: var(--accent); 
+        transform: translateY(-2px); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+    }
+    
+    .room-card.selected { 
+        border-color: var(--primary); 
+        background-color: var(--primary); 
+        color: white; 
+    }
+    
+    .room-card.selected h4, 
+    .room-card.selected p { 
+        color: white; 
+    }
+    
+    .room-full { 
+        background-color: #f1f5f9; 
+        color: #94a3b8; 
+        border-color: #e2e8f0; 
+        cursor: not-allowed; 
+        pointer-events: none; 
+        opacity: 0.7; 
+    }
+    
+    /* Saat Butonları Stili */
+    .times-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .time-btn {
+        padding: 12px 5px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--primary);
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: center;
+    }
+    
+    .time-btn:hover:not(.disabled) {
+        border-color: var(--accent);
+        background-color: #f5f7ff;
+    }
+    
+    .time-btn.selected {
+        border-color: var(--primary);
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .time-btn.disabled {
+        background-color: #f8fafc;
+        color: #94a3b8;
+        cursor: not-allowed;
+        border-color: #e5e7eb;
+    }
+    
+    .time-btn.disabled.dolu {
+        background-color: #fee2e2;
+        color: #ef4444;
+        border-color: #fecaca;
+        position: relative;
+    }
+    
+    .time-btn.disabled.dolu::after {
+        content: "DOLU";
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--danger);
+        color: white;
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+    }
+    
+    button.submit-btn { 
+        width: 100%; 
+        padding: 16px; 
+        background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); 
+        color: white; 
+        border: none; 
+        border-radius: 12px; 
+        font-size: 1.1rem; 
+        font-weight: 800; 
+        cursor: pointer; 
+        transition: 0.3s; 
+        margin-top: 10px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    button.submit-btn:hover { 
+        background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%); 
+        transform: translateY(-2px); 
+        box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3); 
+    }
+    
+    button.submit-btn:disabled { 
+        background: #ccc; 
+        cursor: not-allowed; 
+        transform: none; 
+        box-shadow: none; 
+    }
+    
+    .captcha-group { 
+        display: flex; 
+        gap: 10px; 
+    }
+    
+    .captcha-display { 
+        background: #f1f5f9; 
+        padding: 10px; 
+        border-radius: 8px; 
+        font-weight: 800; 
+        text-align: center; 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 1.2rem; 
+        color: var(--primary); 
+        user-select: none; 
+    }
+    
+    .success { 
+        background-color: #d1fae5; 
+        color: #065f46; 
+        padding: 15px; 
+        border-radius: 10px; 
+        text-align: center; 
+        margin-top: 20px; 
+        font-weight: 600; 
+    }
+    
+    .error-msg { 
+        background-color: #fee2e2; 
+        color: #ef4444; 
+        padding: 15px; 
+        border-radius: 10px; 
+        text-align: center; 
+        margin-top: 20px; 
+        font-weight: 600; 
+    }
+    
+    .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: center;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+    
+    .footer p {
+        margin: 5px 0;
+    }
+    
+    @media (max-width: 480px) { 
+        .container { padding: 25px; } 
+        h2 { font-size: 1.5rem; } 
+        .rooms-grid { grid-template-columns: 1fr; }
+        .times-grid { grid-template-columns: repeat(2, 1fr); }
+    }
 </style>
 </head>
 <body>
@@ -56,9 +367,14 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
 <div class="container">
     <div class="logo-area">
         <img src="https://i.ibb.co/bgx6xhMQ/ikk-LOGO-PNG.png" alt="İngiliz Kültür Koleji Logo">
+        <a href="tel:4449507" class="phone-button">
+            <i class="fas fa-phone-alt"></i>
+            <span>444 9 507</span>
+        </a>
     </div>
+    
     <h2>Erken Kayıt Randevusu</h2>
-    <div class="note-text"> Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.</div>
+    <div class="note-text">Bu alandan sadece kurumumuz öğrencisi olmayan veliler randevu alabilir.</div>
 
     <form id="appointmentForm">
         <div class="form-group"><label>Veli Adı Soyadı</label><input type="text" id="parentName" placeholder="Örn: Ahmet Yılmaz" required></div>
@@ -66,85 +382,143 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         <div class="form-group"><label>Öğrenci Adı Soyadı</label><input type="text" id="studentName" placeholder="Örn: Can Yılmaz" required></div>
         <div class="form-group"><label>Öğrenci Sınıf Seviyesi (Seneye Okuyacağı)</label>
             <select id="grade" required>
-                <option value="">Seçiniz</option><option value="Anaokulu">Anaokulu</option><option value="1">1. Sınıf</option><option value="2">2. Sınıf</option><option value="3">3. Sınıf</option><option value="4">4. Sınıf</option><option value="5">5. Sınıf</option><option value="6">6. Sınıf</option><option value="7">7. Sınıf</option><option value="8">8. Sınıf</option>
+                <option value="">Seçiniz</option>
+                <option value="Anaokulu">Anaokulu</option>
+                <option value="1">1. Sınıf</option>
+                <option value="2">2. Sınıf</option>
+                <option value="3">3. Sınıf</option>
+                <option value="4">4. Sınıf</option>
+                <option value="5">5. Sınıf</option>
+                <option value="6">6. Sınıf</option>
+                <option value="7">7. Sınıf</option>
+                <option value="8">8. Sınıf</option>
             </select>
         </div>
         <div class="form-group"><label>Randevu Tarihi</label><input type="date" id="appointmentDate" required></div>
         <div class="form-group">
             <label>Görüşme Odası Seçimi</label>
             <div class="rooms-grid">
-                <div class="room-card room-full" id="room-oxford" onclick="selectRoom('oxford')"><h4>Oxford</h4><p>Görüşme Odası 1</p></div>
-                <div class="room-card room-full" id="room-manchester"><h4>Manchester</h4><p>Görüşme Odası 2 (Dolu)</p></div>
-                <div class="room-card room-full" id="room-liverpool"><h4>Liverpool</h4><p>Görüşme Odası 3 (Dolu)</p></div>
-                <div class="room-card room-full" id="room-cambridge"><h4>Cambridge</h4><p>Görüşme Odası 4 (Dolu)</p></div>
+                <div class="room-card" id="room-oxford" onclick="selectRoom('oxford')"><h4>Oxford</h4><p>Görüşme Odası 1</p></div>
+                <div class="room-card room-full" id="room-manchester"><h4>Manchester</h4><p>Görüşme Odası 2 (Kapalı)</p></div>
+                <div class="room-card room-full" id="room-liverpool"><h4>Liverpool</h4><p>Görüşme Odası 3 (Kapalı)</p></div>
+                <div class="room-card" id="room-cambridge" onclick="selectRoom('cambridge')"><h4>Cambridge</h4><p>Görüşme Odası 4</p></div>
             </div>
             <input type="hidden" id="selectedRoom" required>
         </div>
-        <div class="form-group"><label>Randevu Saati</label><select id="appointmentTime" required disabled><option value="">Önce Tarih Seçiniz</option></select></div>
-        <div class="form-group"><label>Güvenlik Sorusu (Robot Olmadığınızı Doğrulayın)</label>
-            <div class="captcha-group"><div class="captcha-display" id="captchaDisplay"></div><input type="number" id="captchaInput" placeholder="Sonucu giriniz" required style="width: 50%;"></div>
+        
+        <div class="form-group">
+            <label>Randevu Saati</label>
+            <div class="times-grid" id="timeButtonsContainer">
+                <div class="time-btn disabled">Lütfen önce tarih ve oda seçiniz</div>
+            </div>
+            <input type="hidden" id="appointmentTime" required>
         </div>
-        <button type="submit" class="submit-btn">Randevu Oluştur</button>
+        
+        <div class="form-group"><label>Güvenlik Sorusu (Robot Olmadığınızı Doğrulayın)</label>
+            <div class="captcha-group">
+                <div class="captcha-display" id="captchaDisplay"></div>
+                <input type="number" id="captchaInput" placeholder="Sonucu giriniz" required style="width: 50%;">
+            </div>
+        </div>
+        
+        <button type="submit" class="submit-btn">
+            <i class="fas fa-calendar-check"></i>
+            <span>Randevu Oluştur</span>
+        </button>
+        
         <div id="message"></div>
+        
+        <div class="footer">
+            <p>© İngiliz Kültür Koleji 2026 - Tüm hakları saklıdır.</p>
+        </div>
     </form>
 </div>
 
 <script>
-    // URL'Yİ GÜNCELLEMEYİ UNUTMA!
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqXj1G1OJhO_ZOl5c_VWhUq06fW7goqJw-Kfe5zQMXJL_eUiG2Aptz1MCSwJWdJF87/exec"; 
+    // BU URL'Yİ SİZİN ORİJİNAL URL'NİZLE DEĞİŞTİRİN
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqXj1G1OJhO_ZOl5c_VWhUq06fW7goqJw-Kfe5zQMXJL_eUiG2Aptz1MCSwJWdJF87/exec";
 
+    // Değişkenler
+    let mathResult = 0;
+    let selectedTime = '';
+    
     // --- DOLULUK SORGULAMA ---
     async function checkAvailability() {
         const dateInput = document.getElementById('appointmentDate');
         const roomInput = document.getElementById('selectedRoom');
-        const timeSelect = document.getElementById('appointmentTime');
         
         const dateVal = dateInput.value;
         const roomVal = roomInput.value;
         const dayOfWeek = new Date(dateVal).getDay();
 
         if (!dateVal || !roomVal) {
-            timeSelect.innerHTML = '<option value="">Önce Tarih ve Oda Seçiniz</option>';
-            timeSelect.disabled = true;
+            const container = document.getElementById('timeButtonsContainer');
+            container.innerHTML = '<div class="time-btn disabled">Lütfen önce tarih ve oda seçiniz</div>';
             return;
         }
 
         if (dayOfWeek === 0) {
-            timeSelect.innerHTML = '<option value="">Pazar günü kurumumuz kapalıdır.</option>';
-            timeSelect.disabled = true;
+            const container = document.getElementById('timeButtonsContainer');
+            container.innerHTML = '<div class="time-btn disabled">Pazar günü kurumumuz kapalıdır.</div>';
             return;
         }
 
-        timeSelect.innerHTML = '<option value="">Saatler kontrol ediliyor...</option>';
-        timeSelect.disabled = true;
+        // Basit yükleme mesajı
+        const container = document.getElementById('timeButtonsContainer');
+        container.innerHTML = '<div class="time-btn disabled">Saatler kontrol ediliyor...</div>';
 
         try {
             const response = await fetch(`${SCRIPT_URL}?date=${dateVal}&room=${roomVal}`);
             const data = await response.json();
+            
+            // Eğer hata varsa
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
             const takenSlots = data.taken || [];
-
             const availableHours = ["09:30", "10:30", "11:30", "13:30", "14:30", "15:30", "16:30"];
-            timeSelect.innerHTML = '<option value="">Saat Seçiniz</option>';
-
+            
+            // Saat butonlarını oluştur
+            container.innerHTML = '';
+            
             availableHours.forEach(time => {
-                const option = document.createElement('option');
-                option.value = time;
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'time-btn';
+                button.textContent = time;
                 
-                // Saatleri trimleyip (boşluk temizleyip) karşılaştırıyoruz
+                // Saat doluysa
                 if (takenSlots.includes(time)) {
-                    option.textContent = `${time} (DOLU)`;
-                    option.disabled = true;
-                    option.style.color = '#d90429';
+                    button.classList.add('disabled', 'dolu');
+                    button.disabled = true;
                 } else {
-                    option.textContent = time;
+                    // Tıklanabilir saat butonları için event listener
+                    button.addEventListener('click', function() {
+                        // Tüm saat butonlarının seçimini kaldır
+                        document.querySelectorAll('.time-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        
+                        // Seçili butonu işaretle
+                        button.classList.add('selected');
+                        selectedTime = time;
+                        document.getElementById('appointmentTime').value = time;
+                    });
                 }
-                timeSelect.appendChild(option);
+                
+                // Eğer seçili saat ise
+                if (time === selectedTime) {
+                    button.classList.add('selected');
+                }
+                
+                container.appendChild(button);
             });
-            timeSelect.disabled = false;
 
         } catch (error) {
-            console.error(error);
-            timeSelect.innerHTML = '<option value="">Saatler yüklenemedi.</option>';
+            console.error('Doluluk kontrolü hatası:', error);
+            const container = document.getElementById('timeButtonsContainer');
+            container.innerHTML = '<div class="time-btn disabled">Saatler yüklenemedi. Lütfen tekrar deneyin.</div>';
         }
     }
 
@@ -179,6 +553,13 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             btn.innerText = originalBtnText;
             return;
         }
+        
+        if (!selectedTime) {
+            alert('Lütfen bir randevu saati seçiniz.');
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
+            return;
+        }
 
         const formData = {
             veliAdiSoyadi: document.getElementById('parentName').value,
@@ -187,7 +568,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
             ogrenciSinifi: document.getElementById('grade').value,
             randevuTarihi: document.getElementById('appointmentDate').value,
             secilenOda: document.getElementById('selectedRoom').value,
-            randevuSaati: document.getElementById('appointmentTime').value
+            randevuSaati: selectedTime
         };
 
         // Arka planda kesin kontrol için POST
@@ -206,10 +587,13 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 document.getElementById('appointmentForm').reset();
                 document.querySelectorAll('.room-card').forEach(c => {
                     c.classList.remove('selected');
-                    c.classList.add('room-full');
                 });
-                document.getElementById('appointmentTime').innerHTML = '<option value="">Önce Tarih Seçiniz</option>';
-                document.getElementById('appointmentTime').disabled = true;
+                
+                // Saat butonlarını sıfırla
+                selectedTime = '';
+                const container = document.getElementById('timeButtonsContainer');
+                container.innerHTML = '<div class="time-btn disabled">Lütfen önce tarih ve oda seçiniz</div>';
+                
                 generateMathCaptcha();
                 
             } else {
@@ -223,16 +607,13 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         })
         .catch(error => {
             console.error('Hata:', error);
-            // CORS hatası alırsak başarılı varsaymak zorunda kalabiliriz 
-            // ama Backend'deki kilit sayesinde çifte kayıt yine de olmaz.
-             msg.innerText = '? İşlem tamamlandı.';
-             msg.className = 'success';
-             btn.disabled = false;
-             btn.innerText = originalBtnText;
+            msg.innerText = 'İşlem tamamlandı.';
+            msg.className = 'success';
+            btn.disabled = false;
+            btn.innerText = originalBtnText;
         });
     });
 
-    let mathResult = 0;
     function generateMathCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1; 
         const num2 = Math.floor(Math.random() * 10) + 1; 
@@ -253,22 +634,43 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
     function selectRoom(roomName) {
         const roomEl = document.getElementById('room-' + roomName);
         if (roomEl.classList.contains('room-full')) return;
-        document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
+        
+        // Tüm odaların seçimini kaldır
+        document.querySelectorAll('.room-card').forEach(c => {
+            c.classList.remove('selected');
+        });
+        
+        // Seçili odayı işaretle
         roomEl.classList.add('selected');
         document.getElementById('selectedRoom').value = roomName;
+        selectedTime = ''; // Oda değişince saati sıfırla
         checkAvailability();
     }
 
     document.getElementById('appointmentDate').addEventListener('change', function() {
         const selectedDate = new Date(this.value);
         const dayOfWeek = selectedDate.getDay();
-        const rOx = document.getElementById('room-oxford');
-        document.querySelectorAll('.room-card').forEach(c => { c.classList.remove('selected'); c.classList.add('room-full'); });
+        
+        // Tüm odaların seçimini kaldır
+        document.querySelectorAll('.room-card').forEach(c => { 
+            c.classList.remove('selected'); 
+        });
+        
         document.getElementById('selectedRoom').value = '';
-        if (dayOfWeek !== 0) rOx.classList.remove('room-full');
-        const timeSelect = document.getElementById('appointmentTime');
-        timeSelect.innerHTML = '<option value="">Önce Oda Seçiniz</option>';
-        timeSelect.disabled = true;
+        selectedTime = '';
+        
+        // Cambridge ve Oxford aktif, diğerleri kapalı
+        document.getElementById('room-manchester').classList.add('room-full');
+        document.getElementById('room-liverpool').classList.add('room-full');
+        document.getElementById('room-oxford').classList.remove('room-full');
+        document.getElementById('room-cambridge').classList.remove('room-full');
+        
+        const container = document.getElementById('timeButtonsContainer');
+        if (dayOfWeek === 0) {
+            container.innerHTML = '<div class="time-btn disabled">Pazar günü kurumumuz kapalıdır.</div>';
+        } else {
+            container.innerHTML = '<div class="time-btn disabled">Lütfen önce oda seçiniz</div>';
+        }
     });
 </script>
 </body>
