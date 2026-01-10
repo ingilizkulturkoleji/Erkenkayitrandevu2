@@ -401,7 +401,7 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
                 <div class="room-card" id="room-oxford" onclick="selectRoom('oxford')"><h4>Oxford</h4><p>Görüşme Odası 1</p></div>
                 <div class="room-card room-full" id="room-manchester"><h4>Manchester</h4><p>Görüşme Odası 2 (Kapalı)</p></div>
                 <div class="room-card room-full" id="room-liverpool"><h4>Liverpool</h4><p>Görüşme Odası 3 (Kapalı)</p></div>
-                <div class="room-card" id="room-cambridge" onclick="selectRoom('cambridge')"><h4>Cambridge</h4><p>Görüşme Odası 4</p></div>
+                <div class="room-card room-full" id="room-cambridge"><h4>Cambridge</h4><p>Görüşme Odası 4 (Kapalı)</p></div>
             </div>
             <input type="hidden" id="selectedRoom" required>
         </div>
@@ -659,11 +659,11 @@ src="https://www.facebook.com/tr?id=1233557722304266&ev=PageView&noscript=1"
         document.getElementById('selectedRoom').value = '';
         selectedTime = '';
         
-        // Cambridge ve Oxford aktif, diğerleri kapalı
+        // Sadece Oxford aktif, diğerleri kapalı
         document.getElementById('room-manchester').classList.add('room-full');
         document.getElementById('room-liverpool').classList.add('room-full');
+        document.getElementById('room-cambridge').classList.add('room-full');
         document.getElementById('room-oxford').classList.remove('room-full');
-        document.getElementById('room-cambridge').classList.remove('room-full');
         
         const container = document.getElementById('timeButtonsContainer');
         if (dayOfWeek === 0) {
